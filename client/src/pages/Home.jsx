@@ -15,7 +15,7 @@ const Home = () => {
     }
   return (
     <div className='home'>
-        <Sidebar changeSelected={changeSelected} />
+        <Sidebar changeSelected={changeSelected} selected={selected} />
         <div>
             {selected === 0 && <Dashboard />}
             {selected === 1 && <Analytics />}

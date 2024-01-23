@@ -1,3 +1,4 @@
 .home{
+    overflow-x: hidden;
     display: flex;
 }

@@ -1,0 +1,25 @@
+.myinfo{
+    width: 85vw;
+}
+
+.myinfocards{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin: 4rem auto;
+}
+
+.myinfocard{
+    background-color: white;
+    width: 260px;
+    margin: 0 0.7rem;
+    padding: 1.2rem;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    font-size: 1.5rem;
+}
+
+.myinfocard .amount{
+    font-size: 3.5rem;
+    font-weight: 600;
+}

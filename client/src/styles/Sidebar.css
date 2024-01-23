@@ -43,7 +43,7 @@
 
 .sidemenu .sidemenuitem.selected{
     background-color: white;
-    box-shadow: 0 0px 30px rgba(0,0,0,0.1);
+    box-shadow: 0 0px 30px rgba(0,0,0,0.2);
 }
 
 .sidebar .footer{

@@ -1,6 +1,6 @@
 .sidebar{
     background-color: white;
-    width: 25vb;
+    width: 30vb;
     box-shadow: 0 6px 10px rgba(0,0,0,0.1);
     height:  100vh;
     padding: 0 0.5rem;
@@ -54,4 +54,10 @@
     margin: 0 auto;
     text-align: center;
     font-size: 0.8rem;
+}
+
+@media screen and (max-width: 768px) {
+    .sidebar{
+        width: 15vb;
+    }
 }

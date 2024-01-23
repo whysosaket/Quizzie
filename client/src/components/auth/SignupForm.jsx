@@ -19,7 +19,7 @@ const SignupForm = () => {
         <div className="label cnf">Confirm</div>
         <input type="password" className="" />
       </div>
-      <button className="submit">Log In</button>
+      <button className="submit">Sign Up</button>
     </div>
   );
 };

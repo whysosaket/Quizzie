@@ -35,7 +35,7 @@
 }
 
 .authbutton:hover, .authbutton.selected:hover{
-    background-color: #a9bcff;
+    background-color: #d0d9fb;
 }
 
 .authbutton.selected{

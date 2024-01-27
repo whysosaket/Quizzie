@@ -10,7 +10,7 @@ const QuizModalPage1 = (props) => {
         setSelected(index);
     }
   return (
-    <div className='page1'>
+    <div className='page'>
         <input type='text' placeholder='Quiz Name' />
         <div className='quiztype'>
             <p>Quiz Type</p>

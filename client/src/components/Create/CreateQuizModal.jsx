@@ -1,6 +1,7 @@
 import React, {useState} from 'react'
 import '../../styles/CreateQuiz.css'
 import QuizModalPage1 from './QuizModalPage1'
+import QuizModalPage2 from './QuizModalPage2';
 
 const QuestionModel = {
     question: '',
@@ -19,7 +20,7 @@ const CreateQuizModal = (props) => {
     const [questions, setQuestions] = useState([]);
   return (
     <div className='modal'>
-        <QuizModalPage1 setShowModal={setShowModal} />
+        <QuizModalPage2 setShowModal={setShowModal} />
     </div>
   )
 }

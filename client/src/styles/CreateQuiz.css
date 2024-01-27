@@ -6,7 +6,7 @@
     color: #a5a5a5;
 }
 
-.modal .page1{
+.modal .page{
     position: absolute;
     top: 50%;
     left: 50%;
@@ -19,7 +19,12 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 2rem;}
+    padding: 2rem;
+}
+
+.modal .page.page2{
+    height: 60%;
+}
 
 .modal input[type="text"]{
     width: 90%;
@@ -121,4 +126,172 @@
 
 .cancelconfirm .confirmbtn:hover{
     background-color: #3f8f2b;
+}
+
+.modal .questionselector{
+    border-radius: 100%;
+    border: 1px solid #a5a5a5;
+    width: 2.5rem;
+    height: 2.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.2);
+    margin-right: 0.2rem;
+}
+
+.questionselector:hover{
+    background-color: #60B84B;
+    color: white;
+}
+
+.modal .topbar{
+    width: 90%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.modal .topbar h6{
+    font-size: 1rem;
+    font-weight: 300;
+    margin: 0;
+}
+
+.modal .topbarleft{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal .question {
+    width: 90%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.modal .question input[type="text"]{
+    width: 95%;
+    color: #a5a5a5;
+    padding: 1rem;
+    border: none;
+    border-radius: 12px;
+    margin-top: 0.5rem;
+    font-size: 1rem;
+    box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.2);
+}
+
+.modal .questiontype{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 90%;
+}
+
+.modal .questiontype label{
+    margin: 0 0.5rem;
+}
+
+.modal .page .bottombar{
+    display: flex;
+    display: space-between;
+    align-items: center;
+    width: 90%;
+}
+
+.modal .page .bottomleft{
+    width: 50%;
+}
+
+.modal .page .bottomright{
+    width: 50%;
+    display: flex;
+    justify-content: flex-end;
+    padding: 1rem;
+}
+
+.bottomright .timeroptions{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.bottomright h6{
+    font-size: 1rem;
+    font-weight: 300;
+    margin: 0;
+}
+
+.timeroptions .timer{
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.2);
+    padding: 0.3rem 0.7rem;
+    width: 80px;
+    text-align: center;
+    margin-top: 1rem;
+    cursor: pointer;
+}
+
+.timeroptions .timer.selected{
+    background-color: #D60000;
+    color: white;
+}
+
+.timeroptions .timer:hover{
+    background-color: #D60000;
+    color: white;
+}
+
+.modal .bottomleft label{
+    display: flex;
+}
+
+.modal .bottomleft label input[type="text"]{
+    width: 90%;
+    color: #a5a5a5;
+    padding: 0.8rem;
+    border: none;
+    border-radius: 8px;
+    margin-top: 0.5rem;
+    margin-left: 0.3rem;
+    font-size: 1rem;
+    box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.2);
+}
+
+.modal .bottomleft label input[type="text"].selected {
+    background-color: #60B84B;
+    color: white;
+}
+
+.modal .bottomleft label input[type="text"].selected::placeholder{
+    color: white;
+}
+
+.addoption{
+    width: 90%;
+    text-align: center;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.2);
+    padding: 0.5rem 0;
+    margin-left: 1.5rem;
+    margin-top: 0.5rem;
+}
+
+.addoption:hover{
+    background-color: #60B84B;
+    color: white;
+}
+
+.modal .poll.page .bottomright{
+    display: none;
+}
+
+.modal .poll.page .bottomleft{
+    width: 90%;
 }

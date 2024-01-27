@@ -5,7 +5,8 @@ const questions = ["question1", "question2", "question3"];
 
 const options = ["option1", "option2", "s"];
 
-const QuizModalPage2 = () => {
+const QuizModalPage2 = (props) => {
+    const {setShowModal} = props;
   return (
     <div className="page page2">
     {/* <div className="page page2 poll"> */}
@@ -90,7 +91,7 @@ const QuizModalPage2 = () => {
         </div>
       </div>
       <div className="cancelconfirm">
-        <button className="cancelbtn">Cancel</button>
+        <button onClick={()=>setShowModal(false)} className="cancelbtn">Cancel</button>
         <button className="confirmbtn">Create Quiz</button>
       </div>
     </div>

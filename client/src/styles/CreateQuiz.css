@@ -295,3 +295,42 @@
 .modal .poll.page .bottomleft{
     width: 90%;
 }
+
+.cross{
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+
+.cross:hover{
+    color: #60B84B;
+}
+
+.cong h2{
+    font-size: 2rem;
+    font-weight: 500;
+    text-align: center;
+    color: black;
+}
+
+.cong button{
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    color: white;
+    background-color: #60B84B;
+    box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.2);
+    width: 200px;
+    margin: 0 auto;
+    display: block;
+}
+
+.cong button:hover{
+    background-color: #3f8f2b;
+}

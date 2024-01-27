@@ -1,0 +1,75 @@
+.qwacontainer{
+    margin-top: 2rem;
+    
+}
+
+.qwacontainer .title{
+    color: #5076FF;
+    font-size: 2.5rem;
+    font-weight: 600;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.qwacontainer .littleinfo{
+    color: #FF5D01;
+    font-size: 1rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.qwacontainer .littleinfo h5{
+    font-size: 1rem;
+    font-weight: 500;
+    margin: 0;
+}
+
+.qwacontainer .items{
+    margin-top: 3rem;
+}
+
+.qwacontainer .qnaitem h2{
+    font-size: 1.5rem;
+    font-weight: 500;
+}
+
+.qwacontainer .boxes{
+    margin-top: 1rem;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.qwacontainer .boxes .box{
+    width: 25%;
+    margin: 1rem;
+    padding: 1rem;
+    border-radius: 12px;
+    background-color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.qwacontainer .boxes .box h1{
+    font-size: 2rem;
+    font-weight: 500;
+    margin: 0;
+}
+
+.qwacontainer .boxes .box h3{
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin: 0;
+}
+
+.qwacontainer .boxes .box.poll{
+    font-size: 2rem;
+    flex-direction: row;
+    justify-content: center;
+    width: 15%;
+}
+
+.qwacontainer .boxes .box.poll h1{
+    margin-right: 0.8rem;
+}

@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Home from "./pages/Home";
 import Auth from "./pages/Auth";
+import QWAnalytics from "./pages/QWAnalytics";
 
 function App() {
   return (

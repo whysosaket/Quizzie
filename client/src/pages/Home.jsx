@@ -4,6 +4,7 @@ import Sidebar from '../components/Sidebar'
 import Dashboard from './Dashboard'
 import CreateQuiz from './CreateQuiz'
 import Analytics from './Analytics'
+import QWAnalytics from './QWAnalytics'
 
 const pages = ['Dashboard', 'Analytics', 'Create Quiz']
 

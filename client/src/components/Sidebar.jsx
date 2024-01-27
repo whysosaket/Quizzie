@@ -1,9 +1,15 @@
-import React from "react";
+import React, {useState} from "react";
 import "../styles/Sidebar.css";
+import CreateQuizModal from "./Create/CreateQuizModal";
 
 const Sidebar = (props) => {
   const { changeSelected, selected } = props;
+  const [showModal, setShowModal] = useState(false);
+
+
   return (
+    <>
+    {showModal && <CreateQuizModal setShowModal={setShowModal} />}
     <div className="sidebar">
       <h2 className="title">QUIZZIE</h2>
 
@@ -17,7 +23,7 @@ const Sidebar = (props) => {
         <div onClick={() => changeSelected(1)} className={`sidemenuitem ${selected === 1 && "selected"}`}>
           Analytics
         </div>
-        <div onClick={() => changeSelected(2)} className={`sidemenuitem ${selected === 2 && "selected"}`}>
+        <div onClick={() => setShowModal(true)} className={`sidemenuitem`}>
           Create Quiz
         </div>
       </div>
@@ -26,6 +32,7 @@ const Sidebar = (props) => {
         <h6 className="logout">LOGOUT</h6>
       </div>
     </div>
+    </>
   );
 };
 

@@ -9,6 +9,7 @@ const GlobalState = (props) => {
   const [progress, setProgress] = useState(0);
   const [user, setUser] = useState({ name: "", email: "", quizCreated: 0, questionsCreated: 0, totalImpressions: 0});
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [trending, setTrending] = useState([]);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -91,6 +92,56 @@ const GlobalState = (props) => {
     }
   };
 
+  const getInfo = async () => {
+    try {
+      const response = await fetch(`${url}/api/auth/getuser`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "auth-token": localStorage.getItem("token"),
+        },
+      });
+      const data = await response.json();
+      if (data.success) {
+        setUser({
+          name: data.user.name,
+          email: data.user.email,
+          quizCreated: data.user.quizCreated,
+          questionsCreated: data.user.questionsCreated,
+          totalImpressions: data.user.totalImpressions
+        });
+        setIsAuthenticated(true);
+        return true;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
+  }
+
+  const getTrending = async () => {
+    try {
+      const response = await fetch(`${url}/api/trending`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "auth-token": localStorage.getItem("token"),
+        },
+      });
+      const data = await response.json();
+      if (data.success) {
+        setTrending(data.quizzes);
+        return true;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
+  }
 
   const handleLogout = () => {
     console.log("logout");
@@ -102,7 +153,7 @@ const GlobalState = (props) => {
 
   return (
     <GlobalContext.Provider
-      value={{ login, signup, progress,setProgress, user, handleLogout, isAuthenticated, toastMessage }}
+      value={{ login, signup,getInfo, progress,setProgress, user, handleLogout, isAuthenticated, toastMessage, getTrending, trending}}
     >
       {props.children}
     </GlobalContext.Provider>

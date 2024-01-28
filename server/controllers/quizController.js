@@ -405,4 +405,19 @@ const deleteQuiz = async (req, res) => {
   }
 };
 
-module.exports = { createQuiz, getQuiz, takeQuiz, deleteQuiz, takePoll };
+
+const getTrending = async (req, res) => {
+  let success = false;
+  let user = req.user;
+  try {
+    let quizzes = await Quiz.find({user: user.id}, "impressions createdOn name").sort({ impressions: -1 });
+    quizzes = quizzes.filter((quiz, index) => quiz.impressions > 10);
+    success = true;
+    return res.json({ success, quizzes });
+  } catch (error) {
+    console.log(error);
+    return res.json({ error: "Something Went Wrong!" });
+  }
+}
+
+module.exports = { createQuiz, getQuiz, takeQuiz, deleteQuiz, takePoll, getTrending };

@@ -1,17 +1,22 @@
 import React from 'react'
 import { AiOutlineEye } from "react-icons/ai";
+import formatDate from '../../utils/FormatDate';
 
-const QuizItem = () => {
+const QuizItem = (props) => {
+  const {quiz} = props;
+
+  let date = formatDate(quiz.createdOn);
+
   return (
     <div className='quizitem'>
         <div className='top'>
-            <div className='quizitemtitle'>Quiz 1</div>
+            <div className='quizitemtitle'>{quiz.name}</div>
             <div className='quizviews'>
-                667
+                {quiz.impressions}
                 <AiOutlineEye className='viewicon' />
             </div>
         </div>
-        <div className='quizcreated'>Created on : 04 Sep, 2023</div>
+        <div className='quizcreated'>Created on : {date}</div>
     </div>
   )
 }

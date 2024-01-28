@@ -1,17 +1,48 @@
-import React, {useState} from 'react'
+import React, {useState, useRef, useContext} from 'react'
+import GlobalContext from '../../context/GlobalContext';
+import QuizContext from '../../context/QuizContext';
 
-const options = [ "Q&A Type", "Poll Type" ];
+const options = [ "qna", "poll" ];
 
 const QuizModalPage1 = (props) => {
-    const {setShowModal} = props
+    const {setShowModal, setCurrentPage} = props
     const [selected, setSelected] = useState(2);
+    const {toastMessage} = useContext(GlobalContext);
+    const {setName, setType, setCleanup} = useContext(QuizContext);
 
     const handleSelected = (index) => {
         setSelected(index);
     }
+
+    const nameRef = useRef();
+
+    const handleContinue = () => {
+        const name = nameRef.current.value;
+        if(!name){
+            toastMessage("Please enter a name for the quiz", "warning");
+            return;
+        }
+
+        const type = options[selected];
+        if(!type){
+            toastMessage("Please select a type for the quiz", "warning");
+            return;
+        }
+
+        setName(name);
+        setType(type);
+        setCurrentPage(1);
+    }
+
+    const handleCleanup = () => {
+        setShowModal(false);
+        setCleanup();
+    }
+
+
   return (
     <div className='page'>
-        <input type='text' placeholder='Quiz Name' />
+        <input ref={nameRef} type='text' placeholder='Quiz Name' />
         <div className='quiztype'>
             <p>Quiz Type</p>
             <div className='quiztypebtns'>
@@ -20,8 +51,8 @@ const QuizModalPage1 = (props) => {
             </div>
         </div>
         <div className='cancelconfirm'>
-            <button onClick={()=> setShowModal(false)} className='cancelbtn'>Cancel</button>
-            <button className='confirmbtn'>Continue</button>
+            <button onClick={handleCleanup} className='cancelbtn'>Cancel</button>
+            <button onClick={handleContinue} className='confirmbtn'>Continue</button>
         </div>
     </div>
   )

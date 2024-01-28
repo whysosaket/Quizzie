@@ -18,11 +18,13 @@ const maxQuestions = 5;
 
 const CreateQuizModal = (props) => {
     const {setShowModal} = props
-    const [questions, setQuestions] = useState([]);
+    const [currentPage, setCurrentPage] = useState(0);
+
   return (
     <div className='modal'>
-        {/* <QuizModalPage2 setShowModal={setShowModal} /> */}
-        <Cong setShowModal={setShowModal} />
+        { currentPage === 0 && <QuizModalPage1 setShowModal={setShowModal} setCurrentPage={setCurrentPage} /> }
+        { currentPage === 1 && <QuizModalPage2 setShowModal={setShowModal} setCurrentPage={setCurrentPage} /> }
+        { currentPage === 2 && <Cong setShowModal={setShowModal} setCurrentPage={setCurrentPage} /> }
     </div>
   )
 }

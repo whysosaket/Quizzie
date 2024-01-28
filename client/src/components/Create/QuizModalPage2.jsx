@@ -1,12 +1,44 @@
-import React from "react";
+import React, {useContext, useRef} from "react";
 import { FiPlus } from "react-icons/fi";
+import GlobalContext from '../../context/GlobalContext';
+import QuizContext from '../../context/QuizContext';
 
-const questions = ["question1", "question2", "question3"];
+const questions = ["ss"];
 
-const options = ["option1", "option2", "s"];
+const options = ["option1", "option2"];
 
 const QuizModalPage2 = (props) => {
     const {setShowModal} = props;
+    const {toastMessage} = useContext(GlobalContext);
+    const {setCleanup, createQuestion} = useContext(QuizContext);
+
+    const questionRef = useRef();
+    const optionTypeRef = useRef();
+    const option1Ref = useRef();
+    const option2Ref = useRef();
+    const option3Ref = useRef();
+    const option4Ref = useRef();
+    const option1ImgRef = useRef();
+    const option2ImgRef = useRef();
+    const option3ImgRef = useRef();
+    const option4ImgRef = useRef();
+    const timerRef = useRef();
+
+
+    const handleCleanup = () => {
+        setShowModal(false);
+        setCleanup();
+    }
+
+    const handleCreate = () => {
+
+        const question = questionRef.current.value;
+        const optionType = optionTypeRef.current;
+
+        console.log(optionType);
+        console.log(question);
+    }
+
   return (
     <div className="page page2">
     {/* <div className="page page2 poll"> */}
@@ -26,7 +58,7 @@ const QuizModalPage2 = (props) => {
         <h6>Max 5 questions</h6>
       </div>
       <div className="question">
-        <input type="text" placeholder="Poll Question" />
+        <input ref={questionRef} type="text" placeholder="Poll Question" />
       </div>
       <div className="questiontype">
         <p>Question Type</p>
@@ -37,6 +69,7 @@ const QuizModalPage2 = (props) => {
               name="questionType"
               className="btnopt"
               value="text"
+              ref={optionTypeRef}
             />
             Text
           </label>
@@ -46,6 +79,7 @@ const QuizModalPage2 = (props) => {
               name="questionType"
               className="btnopt"
               value="imageUrl"
+              ref={optionTypeRef}
             />
             Image URL
           </label>
@@ -55,6 +89,7 @@ const QuizModalPage2 = (props) => {
               name="questionType"
               className="btnopt"
               value="textAndImageUrl"
+              ref={optionTypeRef}
             />
             Text & Image URL
           </label>
@@ -91,8 +126,8 @@ const QuizModalPage2 = (props) => {
         </div>
       </div>
       <div className="cancelconfirm">
-        <button onClick={()=>setShowModal(false)} className="cancelbtn">Cancel</button>
-        <button className="confirmbtn">Create Quiz</button>
+        <button onClick={handleCleanup} className="cancelbtn">Cancel</button>
+        <button onClick={handleCreate} className="confirmbtn">Create Quiz</button>
       </div>
     </div>
   );

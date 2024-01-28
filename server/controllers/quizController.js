@@ -1,15 +1,12 @@
 const dotenv = require("dotenv");
 dotenv.config();
 
-const jwt = require("jsonwebtoken");
 const Quiz = require("../models/Quiz");
 const Question = require("../models/Question");
 const User = require("../models/User");
-const bcrypt = require("bcrypt");
 
 const convertToTitleCase = require("../utils/makeTitleCase");
 const generateQuizID = require("../utils/generateQuizID");
-const quiz = require("../routes/quiz");
 
 const createQuiz = async (req, res) => {
   let success = false;

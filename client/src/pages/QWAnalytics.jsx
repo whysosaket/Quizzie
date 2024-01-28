@@ -1,23 +1,26 @@
 import React from 'react';
 import "../styles/QWAnalytics.css";
 import QNAItem from '../components/Analytics/QNAItem';
+import formatDate from '../utils/FormatDate';
 
-const QWAnalytics = () => {
+const QWAnalytics = (props) => {
+  const {questions, quiz} = props;
+  let date = formatDate(quiz.createdOn);
   return (
     <div className='qwacontainer'>
       <div className='title'>
-        Quiz 2 Question Analysis
+        {quiz.name} Question Analysis
         <div className='littleinfo'>
-          <h5>Created on: 04 Sep, 2023</h5>
-          <h5>Impression: 667</h5>
+          <h5>Created on: {date}</h5>
+          <h5>Impression: {quiz.impressions}</h5>
         </div>
       </div>
       <div className='items'>
-          <QNAItem />
-          <QNAItem />
-          <QNAItem />
-          <QNAItem />
-          <QNAItem />
+          {
+            questions.map((question, index)=>(
+              <QNAItem key={index} question={question} index={index} />
+            ))
+          }
       </div>
     </div>
   )

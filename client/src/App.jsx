@@ -5,6 +5,7 @@ import QWAnalytics from "./pages/QWAnalytics";
 import Quiz from "./pages/Quiz";
 
 import {GlobalState} from "./context/GlobalContext";
+import {AnalyticsState} from "./context/AnalyticsContext";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import TopLoadingBar from "./components/TopLoadingBar";
@@ -14,6 +15,7 @@ function App() {
   return (
     <>
     <GlobalState>
+    <AnalyticsState>
     <ToastContainer autoClose={1000} />
     <TopLoadingBar />
       <Router>
@@ -29,6 +31,7 @@ function App() {
           </Routes>
         </div>
       </Router>
+      </AnalyticsState>
       </GlobalState>
     </>
   );

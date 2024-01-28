@@ -1,14 +1,21 @@
-import React, {useState} from "react";
+import React, {useState, useContext, useEffect} from "react";
 import "../styles/Analytics.css";
 import AnalyticItem from "../components/Analytics/AnalyticItem";
 import QWAnalytics from "./QWAnalytics";
+import AnalyticsContext from "../context/AnalyticsContext";
 
 const Analytics = () => {
   const [isSingle, setIsSingle] = useState(false);
+  const {quizzes, getAllQuizzes, questions, quiz} = useContext(AnalyticsContext);
+
+  useEffect(() => {
+    getAllQuizzes();
+  }, [])
+
   return (
     <>
       {isSingle ? (
-        <QWAnalytics />
+        <QWAnalytics questions={questions} quiz={quiz} />
       ) : (
         <>
           <div className="analysis">
@@ -26,10 +33,9 @@ const Analytics = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  <AnalyticItem setIsSingle={setIsSingle} />
-                  <AnalyticItem setIsSingle={setIsSingle} />
-                  <AnalyticItem setIsSingle={setIsSingle} />
-                  <AnalyticItem setIsSingle={setIsSingle} />
+                  {quizzes.map((quiz, index) => (
+                    <AnalyticItem key={index} quiz={quiz} setIsSingle={setIsSingle} index={index} />
+                  ))}
                 </tbody>
               </table>
             </div>

@@ -3,14 +3,12 @@ const router = expess.Router();
 
 const auth = require("./auth");
 const quiz = require("./quiz");
-// const product = require("./product");
-// const view = require("./view");
+const analytics = require("./analytics");
 
 const r = () => {
   auth(router);
   quiz(router);
-//   product(router);
-//   view(router);
+  analytics(router);
   return router;
 };
 

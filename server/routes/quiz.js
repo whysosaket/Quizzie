@@ -1,0 +1,12 @@
+const { createQuiz, getQuiz, takeQuiz, deleteQuiz, takePoll} = require("../controllers/quizController");
+const fetchuser = require("../middleware/fetchuser");
+
+const quiz = (router) => {
+    router.route("/api/quiz/create").post(fetchuser, (req, res) => createQuiz(req, res));
+    router.route("/api/quiz/:quizID").get((req, res) => getQuiz(req, res));
+    router.route("/api/quiz/:quizID").post((req, res) => takeQuiz(req, res));
+    router.route("/api/quiz/:quizID").delete(fetchuser, (req, res) => deleteQuiz(req, res));
+    router.route("/api/poll/:quizID").post((req, res) => takePoll(req, res));
+    };
+
+module.exports = quiz;

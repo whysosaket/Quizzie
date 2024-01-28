@@ -203,11 +203,11 @@
 }
 
 .modal .page .bottomleft{
-    width: 50%;
+    width: 70%;
 }
 
 .modal .page .bottomright{
-    width: 50%;
+    width: 35%;
     display: flex;
     justify-content: flex-end;
     padding: 1rem;
@@ -273,7 +273,7 @@
 }
 
 .addoption{
-    width: 90%;
+    width: 60%;
     text-align: center;
     background-color: white;
     border-radius: 12px;
@@ -281,6 +281,8 @@
     padding: 0.5rem 0;
     margin-left: 1.5rem;
     margin-top: 0.5rem;
+    color: black;
+    cursor: pointer;
 }
 
 .addoption:hover{
@@ -333,4 +335,18 @@
 
 .cong button:hover{
     background-color: #3f8f2b;
+}
+
+.optionnnn{
+    display: flex;
+    align-items: center;
+}
+
+.optionnnn .deleteicon{
+    margin-left: 0.5rem;
+}
+
+.questionselector.selected{
+    background-color: #60B84B;
+    color: white;
 }

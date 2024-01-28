@@ -1,28 +1,22 @@
-import React, {useContext, useRef} from "react";
+import React, { useContext, useRef, useState } from "react";
 import { FiPlus } from "react-icons/fi";
+import { RiDeleteBin6Fill } from "react-icons/ri";
 import GlobalContext from '../../context/GlobalContext';
 import QuizContext from '../../context/QuizContext';
 
-const questions = ["ss"];
 
-const options = ["option1", "option2"];
 
 const QuizModalPage2 = (props) => {
-    const {setShowModal} = props;
-    const {toastMessage} = useContext(GlobalContext);
-    const {setCleanup, createQuestion} = useContext(QuizContext);
+    const { setShowModal } = props;
+    const { toastMessage } = useContext(GlobalContext);
+    const { setCleanup, createQuestion, quizInfo } = useContext(QuizContext);
 
-    const questionRef = useRef();
-    const optionTypeRef = useRef();
-    const option1Ref = useRef();
-    const option2Ref = useRef();
-    const option3Ref = useRef();
-    const option4Ref = useRef();
-    const option1ImgRef = useRef();
-    const option2ImgRef = useRef();
-    const option3ImgRef = useRef();
-    const option4ImgRef = useRef();
-    const timerRef = useRef();
+    const [questionType, setQuestionType] = useState("text");
+    const [selectedOption, setSelectedOption] = useState(-1);
+    const [selectedTimer, setSelectedTimer] = useState("0");
+    const [options, setOptions] = useState(["option1", "option2"]);
+    const [questionNumber, setQuestionNumber] = useState([1]);
+    const [selectedQuestion, setSelectedQuestion] = useState(0);
 
 
     const handleCleanup = () => {
@@ -30,107 +24,240 @@ const QuizModalPage2 = (props) => {
         setCleanup();
     }
 
-    const handleCreate = () => {
+    const questionRef = useRef();
+    const optionRef = [useRef(), useRef(), useRef(), useRef()];
+    const optionImgRef = [useRef(), useRef(), useRef(), useRef()];
 
-        const question = questionRef.current.value;
-        const optionType = optionTypeRef.current;
-
-        console.log(optionType);
-        console.log(question);
+    const handleAddOption = ()=>{
+        if(options.length === 4){
+            toastMessage("Max 4 options allowed", "warning");
+            return;
+        }
+        setOptions([...options, "option"+(options.length+1)]);
     }
 
-  return (
-    <div className="page page2">
-    {/* <div className="page page2 poll"> */}
-      <div className="topbar">
-        <div className="topbarleft">
-          {questions.map((question, index) => {
-            return (
-              <div key={index} className="questionselector">
-                <h6>{index + 1}</h6>
-              </div>
-            );
-          })}
-          <div className="questionselector">
-            <FiPlus />
-          </div>
-        </div>
-        <h6>Max 5 questions</h6>
-      </div>
-      <div className="question">
-        <input ref={questionRef} type="text" placeholder="Poll Question" />
-      </div>
-      <div className="questiontype">
-        <p>Question Type</p>
-        <div className="questiontypebtns">
-          <label>
-            <input
-              type="radio"
-              name="questionType"
-              className="btnopt"
-              value="text"
-              ref={optionTypeRef}
-            />
-            Text
-          </label>
-          <label>
-            <input
-              type="radio"
-              name="questionType"
-              className="btnopt"
-              value="imageUrl"
-              ref={optionTypeRef}
-            />
-            Image URL
-          </label>
-          <label>
-            <input
-              type="radio"
-              name="questionType"
-              className="btnopt"
-              value="textAndImageUrl"
-              ref={optionTypeRef}
-            />
-            Text & Image URL
-          </label>
-        </div>
-      </div>
-      <div className="bottombar">
-        <div className="bottomleft">
-          {options.map((option, index) => {
-            return (
-              <label key={index}>
-                <input
-                  type="radio"
-                  name="option"
-                  className="btnopt "
-                  value="text"
-                />
-                <input className={`${index==1&&"selected"}`} type="text" placeholder="Text" />
-                <input className={`${index==1&&"selected"} imageoption`} type="text" placeholder="Image URL" />
-              </label>
-            );
-          })}
+    const handleDeleteOption = (index)=>{
+      console.log(index);
+        if(options.length === 2){
+            toastMessage("Min 2 options required", "warning");
+            return;
+        }
+        let newOptions = [];
+        options.forEach((option, i)=>{
+            if(i!==index){
+                newOptions.push(option);
+            }
+        })
+        
+        if (index===2 && options.length===4){
+          if (optionRef[2].current)
+            optionRef[2].current.value = optionRef[3].current.value;
+          if (optionImgRef[2].current)
+            optionImgRef[2].current.value = optionImgRef[3].current.value;
+        }
 
-                <div className="addoption">
-                    Add Option
+        setOptions(newOptions);
+        setSelectedOption(-1);
+
+    }
+
+    const handleAddQuestion = () => {
+        const question = questionRef.current.value;
+        if(!question){
+            toastMessage("Please enter a question", "warning");
+            return;
+        }
+
+        const optionType = questionType;
+
+        let option1, option2, option3, option4, option1img, option2img, option3img, option4img;
+        if(optionRef[0].current) option1 = optionRef[0].current.value;
+        if(optionRef[1].current) option2 = optionRef[1].current.value;
+        if(optionRef[2].current) option3 = optionRef[2].current.value;
+        if(optionRef[3].current) option4 = optionRef[3].current.value;
+
+        if(optionImgRef[0].current) option1img = optionImgRef[0].current.value;
+        if(optionImgRef[1].current) option2img = optionImgRef[1].current.value;
+        if(optionImgRef[2].current) option3img = optionImgRef[2].current.value;
+        if(optionImgRef[3].current) option4img = optionImgRef[3].current.value;
+
+        const timer = selectedTimer;
+        let correctAnswer;
+        if(optionType === "text"){
+            if (selectedOption === 0) correctAnswer = option1;
+            else if (selectedOption === 1) correctAnswer = option2;
+            else if (selectedOption === 2) correctAnswer = option3;
+            else if (selectedOption === 3) correctAnswer = option4;
+        }else if(optionType === "imageUrl"){
+            if (selectedOption === 0) correctAnswer = option1img;
+            else if (selectedOption === 1) correctAnswer = option2img;
+            else if (selectedOption === 2) correctAnswer = option3img;
+            else if (selectedOption === 3) correctAnswer = option4img;
+        }else if(optionType === "textAndImageUrl"){
+            if (selectedOption === 0) correctAnswer = option1 + " " + option1img;
+            else if (selectedOption === 1) correctAnswer = option2 + " " + option2img;
+            else if (selectedOption === 2) correctAnswer = option3 + " " + option3img;
+            else if (selectedOption === 3) correctAnswer = option4 + " " + option4img;
+        }
+
+        // check if all options are filled
+        if(!option1 || !option2){
+            toastMessage("Please enter atleast 2 options", "warning");
+            return;
+        }
+
+        // check if correct answer is filled
+        if(!correctAnswer){
+            toastMessage("Please select a correct answer", "warning");
+            return;
+        } 
+
+        let finalOptionType;
+        if(optionType === "text"){
+            finalOptionType = "text";
+        }else if(optionType === "imageUrl"){
+            finalOptionType = "img";
+        }else if(optionType === "textAndImageUrl"){
+            finalOptionType = "both";
+        }
+
+
+        createQuestion(
+            question,
+            quizInfo.type,
+            finalOptionType,
+            optionRef[0].current,
+            optionRef[1].current,
+            optionRef[2].current,
+            optionRef[3].current,
+            optionImgRef[0].current,
+            optionImgRef[1].current,
+            optionImgRef[2].current,
+            optionImgRef[3].current,
+            timer,
+            correctAnswer
+        )
+
+        setQuestionNumber([...questionNumber, questionNumber.length+1]);
+    }
+
+    const handleQuestionSelect = (index) => {
+        setSelectedQuestion(index);
+        questionRef.current.value = questions[index].question;
+        setQuestionType(questions[index].optionType);
+        setSelectedTimer(questions[index].timer);
+    }
+
+    return (
+        <div className="page page2">
+            <div className="topbar">
+                <div className="topbarleft">
+                    {questionNumber.map((question, index) => {
+                        return (
+                            <div key={index} className={`questionselector ${selectedQuestion===index&&"selected"}`}>
+                                <h6>{index + 1}</h6>
+                            </div>
+                        );
+                    })}
+                    {questionNumber.length < 5 &&  <div onClick={handleAddQuestion} className="questionselector">
+                          <FiPlus />
+                      </div>}
                 </div>
+                <h6>Max 5 questions</h6>
+            </div>
+            <div className="question">
+                <input ref={questionRef} type="text" placeholder="Poll Question" />
+            </div>
+            <div className="questiontype">
+                <p>Question Type</p>
+                <div className="questiontypebtns">
+                    <label>
+                        <input
+                            type="radio"
+                            name="questionType"
+                            className="btnopt"
+                            value="text"
+                            checked={questionType === "text"}
+                            onChange={() => setQuestionType("text")}
+                        />
+                        Text
+                    </label>
+                    <label>
+                        <input
+                            type="radio"
+                            name="questionType"
+                            className="btnopt"
+                            value="imageUrl"
+                            checked={questionType === "imageUrl"}
+                            onChange={() => setQuestionType("imageUrl")}
+                        />
+                        Image URL
+                    </label>
+                    <label>
+                        <input
+                            type="radio"
+                            name="questionType"
+                            className="btnopt"
+                            value="textAndImageUrl"
+                            checked={questionType === "textAndImageUrl"}
+                            onChange={() => setQuestionType("textAndImageUrl")}
+                        />
+                        Text & Image URL
+                    </label>
+                </div>
+            </div>
+            <div className="bottombar">
+                <div className="bottomleft">
+                    {options.map((option, index) => {
+                        return (
+                          <div className="optionnnn">
+                            <label key={index}>
+                                <input
+                                    type="radio"
+                                    name="option"
+                                    className="btnopt "
+                                    value={option}
+                                    checked={selectedOption === index}
+                                    onChange={() => setSelectedOption(index)}
+                                />
+                                {(questionType === "text" || questionType === "textAndImageUrl") && (
+                                    <input ref={optionRef[index]} className={`${selectedOption === index && "selected"}`} type="text" placeholder="Text" />
+                                )}
+                                {(questionType === "imageUrl" || questionType === "textAndImageUrl") && (
+                                    <input ref={optionImgRef[index]} className={`${selectedOption === index && "selected"} imageoption`} type="text" placeholder="Image URL" />
+                                )}
+                                
+                            </label>
+                            {index>1 && <RiDeleteBin6Fill onClick={()=> handleDeleteOption(index)} className="deleteicon" />}
+                            </div>
+                        );
+                    })}
+
+                    {options.length<4&&<div onClick={handleAddOption} className="addoption">
+                        Add Option
+                    </div>}
+                </div>
+                <div className="bottomright">
+                <div className="timeroptions">
+                <h6>Timer</h6>
+                <div className={`timer ${selectedTimer === "0" && "selected"}`} onClick={() => setSelectedTimer("0")}>
+                    OFF
+                </div>
+                <div className={`timer ${selectedTimer === "5" && "selected"}`} onClick={() => setSelectedTimer("5")}>
+                    5 sec
+                </div>
+                <div className={`timer ${selectedTimer === "10" && "selected"}`} onClick={() => setSelectedTimer("10")}>
+                    10 sec
+                </div>
+            </div>
+                </div>
+            </div>
+            <div className="cancelconfirm">
+                <button onClick={handleCleanup} className="cancelbtn">Cancel</button>
+                <button className="confirmbtn">Create Quiz</button>
+            </div>
         </div>
-        <div className="bottomright">
-          <div className="timeroptions">
-            <h6>Timer</h6>
-            <div className="timer">OFF</div>
-            <div className="timer">5 sec</div>
-            <div className="timer selected">10 sec</div>
-          </div>
-        </div>
-      </div>
-      <div className="cancelconfirm">
-        <button onClick={handleCleanup} className="cancelbtn">Cancel</button>
-        <button onClick={handleCreate} className="confirmbtn">Create Quiz</button>
-      </div>
-    </div>
-  );
+    );
 };
 
 export default QuizModalPage2;

@@ -27,20 +27,22 @@ const QuizState = (props) => {
             type,
             optionType,
             options: [
-                option1,
-                option2,
-                option3,
-                option4
+                option1&&option1.value,
+                option2&&option2.value,
+                option3&&option3.value,
+                option4&&option4.value
             ],
             imageOptions: [
-                option1img,
-                option2img,
-                option3img,
-                option4img
+                option1img&&option1img.value,
+                option2img&&option2img.value,
+                option3img&&option3img.value,
+                option4img&&option4img.value
             ],
-            correctAnswer,
-            timer
+            timer,
+            correctAnswer
         }
+
+        console.log(newQuestion);
 
         setQuestions([...questions, newQuestion]);
     }

@@ -85,8 +85,11 @@ const loginUser = async (req, res) => {
 
     const token = jwt.sign({ id: user._id }, JWT_SECRET);
 
+    // filter sensitive data
+    user.password = undefined;
+
     success = true;
-    return res.json({ success, info:"Login Success", token });
+    return res.json({ success, info:"Login Success", token, data: user });
   } catch (error) {
     console.log(error);
     return res.json({ error: "Something Went Wrong!" });

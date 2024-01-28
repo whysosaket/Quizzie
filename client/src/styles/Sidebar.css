@@ -51,6 +51,7 @@
 }
 
 .sidebar .footer .logout{
+    cursor: pointer;
     margin: 0 auto;
     text-align: center;
     font-size: 0.8rem;

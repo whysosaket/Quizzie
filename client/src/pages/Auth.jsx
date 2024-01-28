@@ -9,11 +9,11 @@ const Auth = () => {
   const [wp, setWp] = useState(true);
 
   const showSignup = ()=>{
-    setWp(true)
+    setWp(false)
   }
 
   const showLogin = ()=>{
-    setWp(false);
+    setWp(true);
   }
 
   return (
@@ -21,16 +21,16 @@ const Auth = () => {
       <div className='authbox'>
             <h1 className='title'>QUIZZIE</h1>
             <div className='authtabs'>
-                <div onClick={showSignup} className={`authbutton ${wp&&"selected"}`}>
+                <div onClick={showSignup} className={`authbutton ${!wp&&"selected"}`}>
                   Sign Up
                 </div>
-                <div onClick={showLogin} className={`authbutton ${!wp&&"selected"}`}>
+                <div onClick={showLogin} className={`authbutton ${wp&&"selected"}`}>
                   Log In
                 </div>
             </div>
             <div className='authcontainer'>
                 {
-                  wp ? <SignupForm /> : <LoginForm />
+                  wp ?  <LoginForm /> : <SignupForm setWp={setWp} />
                 }
             </div>
       </div>

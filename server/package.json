@@ -4,7 +4,7 @@
   "description": "This is the server for quizzie",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
   "keywords": [
     "quizzie"
@@ -18,5 +18,8 @@
     "express": "^4.18.2",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.0.3"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
   }
 }

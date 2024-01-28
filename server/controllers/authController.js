@@ -63,16 +63,15 @@ const createUser = async (req, res) => {
 
 const loginUser = async (req, res) => {
   let success = false;
-  let { login, password } = req.body;
-  login = login.toString().toLowerCase();
-  console.log(login, password);
+  let { email, password } = req.body;
+  email = email.toString().toLowerCase();
   try {
-    let emailCheck = await User.findOne({ email: login });
+    let emailCheck = await User.findOne({  email });
     if (!emailCheck) {
       return res.json({ success, error: "Invalid Credentials!" });
     }
 
-    let user = emailCheck ? emailCheck : mobileCheck;
+    let user = emailCheck;
 
     if (!user) {
       return res.json({ success, error: "Invalid Credentials!" });
@@ -87,11 +86,28 @@ const loginUser = async (req, res) => {
     const token = jwt.sign({ id: user._id }, JWT_SECRET);
 
     success = true;
-    return res.json({ success, info:"Login Success", token, data: user });
+    return res.json({ success, info:"Login Success", token });
   } catch (error) {
     console.log(error);
     return res.json({ error: "Something Went Wrong!" });
   }
 };
 
-module.exports = { createUser, loginUser };
+const getUser = async (req, res) => {
+    let success = false;
+    try{
+        const user = await User.findById(req.user.id).select("-password");
+        if (!user) {
+            return res.json({ success, error: "User Not Found!" });
+        }
+        success = true;
+        return res.json({success, user});
+    }
+    catch (error){
+        console.log(error);
+        return res.json({ error: "Something Went Wrong!" });
+    }
+}
+
+
+module.exports = { createUser, loginUser, getUser };

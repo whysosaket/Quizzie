@@ -26,10 +26,17 @@ const createQuiz = async (req, res) => {
             return res.json({ success, error: "User Not Found!" });
         }
 
-        if (name.length < 6) {
+        if(questions.length > 5){
+            return res.json({
+                success, 
+                error: "Quiz can have at most 5 questions!"
+            });
+        }
+
+        if (name.length < 3) {
         return res.json({
             success,
-            error: "Quiz Name must be at least 6 characters long!",
+            error: "Quiz Name must be at least 3 characters long!",
         });
         }
     

@@ -92,7 +92,7 @@ const QuizModalPage2 = (props) => {
       return;
     }
 
-    if (selectedOption === -1) {
+    if (quizInfo.type ==="qna" && selectedOption === -1) {
       toastMessage("Please select an option", "warning");
       return;
     }
@@ -511,14 +511,15 @@ const QuizModalPage2 = (props) => {
             return (
               <div className="optionnnn">
                 <label key={index}>
+                  { quizInfo.type!=="poll"&&
                   <input
                     type="radio"
                     name="option"
-                    className="btnopt "
+                    className="btnopt"
                     value={option}
                     checked={selectedOption === index}
                     onChange={() => setSelectedOption(index)}
-                  />
+                  />}
                   {(questionType === "text" ||
                     questionType === "textAndImageUrl") && (
                     <input

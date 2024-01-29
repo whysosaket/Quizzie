@@ -85,7 +85,6 @@ const createQuiz = async (req, res) => {
         correctAnswer,
         options,
         imageOptions,
-        type,
       } = question;
       if (questionText.length < 4) {
         return res.json({
@@ -157,6 +156,7 @@ const createQuiz = async (req, res) => {
 
 
       // Validating correct Answer
+      console.log(correctAnswer, optionType, type);
 
       if (optionType === "text" || optionType === "both") {
         if (type === "poll") {
@@ -200,6 +200,10 @@ const createQuiz = async (req, res) => {
         imageOptions,
         timer,
       } = question;
+
+      if (type === "poll") {
+        correctAnswer = "NA";
+      }
 
       let newQuestion = await Question.create({
         question: questionText,

@@ -4,11 +4,11 @@ import {useLocation} from 'react-router-dom'
 
 const delimeter = "@1&2^";
 
-const Questions = () => {
+const Questions = (props) => {
   const location = useLocation();
   const { getQuiz, takeQuiz, takeQuizQuestions, takeQuizInfo } = useContext(QuizContext);
+  const {setIsFinished} = props;
 
-  const [quiz, setQuiz] = useState();
   const [questionNumber, setQuestionNumber] = useState(0);
   const [answers, setAnswers] = useState([]);
   const [timer, setTimer] = useState(0);
@@ -21,7 +21,6 @@ const Questions = () => {
 
   useEffect(() => {
     let countdown;
-    console.log(takeQuizQuestions[questionNumber]);
 
     if(takeQuizQuestions[questionNumber] && takeQuizQuestions[questionNumber].timer === 0){
         return () => clearInterval(countdown);
@@ -36,28 +35,7 @@ const Questions = () => {
         handleNext();
     }else if(isStarted && timer === -1 && questionNumber === takeQuizInfo.questions.length - 1){
         // takeQuiz(takeQuizInfo.quizID, answers);
-        let newAnswers = [...answers];
-        newAnswers.push(selected);
-        let finalAnswers = [];
-        for(let i=0; i<takeQuizInfo.questions.length; i++){
-            let ans = "";
-            if(takeQuizQuestions[i].optionType === "text"){
-                ans += takeQuizQuestions[i].options[newAnswers[i]];
-                ans += delimeter;
-            }
-            else if(takeQuizQuestions[i].optionType === "img"){
-                ans += delimeter;
-                ans += takeQuizQuestions[i].imageOptions[newAnswers[i]];
-            }else if(takeQuizQuestions[i].optionType === "both"){
-                ans += takeQuizQuestions[i].options[newAnswers[i]];
-                ans += delimeter;
-                ans += takeQuizQuestions[i].imageOptions[newAnswers[i]];
-            }
-            finalAnswers.push(ans);
-        }
-
-        // takeQuiz(takeQuizInfo.quizID, finalAnswers);
-        console.log(finalAnswers);
+        handleFinish();
     }
 
     return () => clearInterval(countdown);
@@ -81,6 +59,30 @@ const Questions = () => {
     setQuestionNumber(questionNumber+1);
     setTimer(takeQuizQuestions[questionNumber+1].timer);
   }
+
+    const handleFinish = async () => {
+        let newAnswers = [...answers];
+        newAnswers.push(selected);
+        let finalAnswers = [];
+        for(let i=0; i<takeQuizInfo.questions.length; i++){
+            let ans = "";
+            if(takeQuizQuestions[i].optionType === "text"){
+                ans += takeQuizQuestions[i].options[newAnswers[i]];
+                ans += delimeter;
+            }
+            else if(takeQuizQuestions[i].optionType === "img"){
+                ans += delimeter;
+                ans += takeQuizQuestions[i].imageOptions[newAnswers[i]];
+            }else if(takeQuizQuestions[i].optionType === "both"){
+                ans += takeQuizQuestions[i].options[newAnswers[i]];
+                ans += delimeter;
+                ans += takeQuizQuestions[i].imageOptions[newAnswers[i]];
+            }
+            finalAnswers.push(ans);
+        }
+        await takeQuiz(takeQuizInfo.quizID, finalAnswers);
+        setIsFinished(true);
+    }
 
 
   return (
@@ -109,7 +111,7 @@ const Questions = () => {
         }
         <div className="submit">
           {
-              questionNumber < takeQuizInfo.questions.length - 1?<div onClick={handleNext} className="submitbtn">Next</div>:<div className="submitbtn">Submit</div>
+              questionNumber < takeQuizInfo.questions.length - 1?<div onClick={handleNext} className="submitbtn">Next</div>:<div onClick={handleFinish} className="submitbtn">Submit</div>
           }
         </div>
       </div>:<div className="questions startquiz">

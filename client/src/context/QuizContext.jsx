@@ -171,7 +171,7 @@ const QuizState = (props) => {
             });
             const data = await response.json();
             if(data.success){
-                const {score, total} = data;
+                const {score, total} = data.result;
                 setResult({score, total});
                 return true;
             }else{
@@ -189,7 +189,7 @@ const QuizState = (props) => {
    
 
     return (
-        <QuizContext.Provider value={{getQuiz,takeQuizQuestions,takeQuizInfo, takeQuiz, setInfo,toastMessage,shareLink, cleanUp, quizInfo, createQuestion, questions, deleteQuestion, createQuiz}}>
+        <QuizContext.Provider value={{result, getQuiz,takeQuizQuestions,takeQuizInfo, takeQuiz, setInfo,toastMessage,shareLink, cleanUp, quizInfo, createQuestion, questions, deleteQuestion, createQuiz}}>
             {props.children}
         </QuizContext.Provider>
     )

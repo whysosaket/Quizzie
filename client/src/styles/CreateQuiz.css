@@ -350,3 +350,19 @@
     background-color: #60B84B;
     color: white;
 }
+
+.confirmbtn.oo{
+    color: white;
+    background-color: #60B84B;
+    margin: auto;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 0.5rem 1rem;
+}
+
+.confirmbtn.oo:hover{
+    background-color: #3f8f2b;
+}

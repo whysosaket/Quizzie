@@ -8,7 +8,7 @@ const QuizModalPage1 = (props) => {
     const {setShowModal, setCurrentPage} = props
     const [selected, setSelected] = useState(2);
     const {toastMessage} = useContext(GlobalContext);
-    const {setName, setType, setCleanup} = useContext(QuizContext);
+    const {setName, setType, cleanUp} = useContext(QuizContext);
 
     const handleSelected = (index) => {
         setSelected(index);
@@ -36,7 +36,7 @@ const QuizModalPage1 = (props) => {
 
     const handleCleanup = () => {
         setShowModal(false);
-        setCleanup();
+        cleanUp();
     }
 
 

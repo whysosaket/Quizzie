@@ -20,7 +20,7 @@ const QuizState = (props) => {
         setQuizInfo({...quizInfo, type});
     }
 
-    const createQuestion = (question, type, optionType, option1, option2, option3, option4, option1img, option2img, option3img, option4img, timer, correctAnswer) => {
+    const createQuestion = (index, question, type, optionType, option1, option2, option3, option4, option1img, option2img, option3img, option4img, timer, correctAnswer) => {
 
         const newQuestion = {
             question,
@@ -40,18 +40,18 @@ const QuizState = (props) => {
             ],
             timer,
             correctAnswer
-        }
+        }   
 
-        console.log(newQuestion);
-
-        setQuestions([...questions, newQuestion]);
+        const newQuestions = [...questions];
+        newQuestions[index] = newQuestion;
+        setQuestions(newQuestions);
     }
 
 
    
 
     return (
-        <QuizContext.Provider value={{setName, setType, cleanUp, quizInfo, createQuestion}}>
+        <QuizContext.Provider value={{setName, setType, cleanUp, quizInfo, createQuestion, questions}}>
             {props.children}
         </QuizContext.Provider>
     )

@@ -9,7 +9,7 @@ import QuizContext from '../../context/QuizContext';
 const QuizModalPage2 = (props) => {
     const { setShowModal } = props;
     const { toastMessage } = useContext(GlobalContext);
-    const { setCleanup, createQuestion, quizInfo } = useContext(QuizContext);
+    const { cleanUp, createQuestion, quizInfo, questions } = useContext(QuizContext);
 
     const [questionType, setQuestionType] = useState("text");
     const [selectedOption, setSelectedOption] = useState(-1);
@@ -21,7 +21,7 @@ const QuizModalPage2 = (props) => {
 
     const handleCleanup = () => {
         setShowModal(false);
-        setCleanup();
+        cleanUp();
     }
 
     const questionRef = useRef();
@@ -61,7 +61,7 @@ const QuizModalPage2 = (props) => {
 
     }
 
-    const handleAddQuestion = () => {
+    const handleAddQuestion = (a) => {
         const question = questionRef.current.value;
         if(!question){
             toastMessage("Please enter a question", "warning");
@@ -80,6 +80,46 @@ const QuizModalPage2 = (props) => {
         if(optionImgRef[1].current) option2img = optionImgRef[1].current.value;
         if(optionImgRef[2].current) option3img = optionImgRef[2].current.value;
         if(optionImgRef[3].current) option4img = optionImgRef[3].current.value;
+
+        if(optionImgRef[0].current && !optionImgRef[0].current.value){
+            toastMessage("Please enter image url for option 1", "warning");
+            return;
+        }
+
+        if(optionImgRef[1].current && !optionImgRef[1].current.value){
+            toastMessage("Please enter image url for option 2", "warning");
+            return;
+        }
+
+        if(optionImgRef[2].current && !optionImgRef[2].current.value){
+            toastMessage("Please enter image url for option 3", "warning");
+            return;
+        }
+
+        if(optionImgRef[3].current && !optionImgRef[3].current.value){
+            toastMessage("Please enter image url for option 4", "warning");
+            return;
+        }
+
+        if(optionRef[0].current && !optionRef[0].current.value){
+            toastMessage("Please enter text for option 1", "warning");
+            return;
+        }
+
+        if(optionRef[1].current && !optionRef[1].current.value){
+            toastMessage("Please enter text for option 2", "warning");
+            return;
+        }
+
+        if(optionRef[2].current && !optionRef[2].current.value){
+            toastMessage("Please enter text for option 3", "warning");
+            return;
+        }
+
+        if(optionRef[3].current && !optionRef[3].current.value){
+            toastMessage("Please enter text for option 4", "warning");
+            return;
+        }
 
         const timer = selectedTimer;
         let correctAnswer;
@@ -101,7 +141,7 @@ const QuizModalPage2 = (props) => {
         }
 
         // check if all options are filled
-        if(!option1 || !option2){
+        if((!option1 || !option2) && (!option1img || !option2img)){
             toastMessage("Please enter atleast 2 options", "warning");
             return;
         }
@@ -123,6 +163,7 @@ const QuizModalPage2 = (props) => {
 
 
         createQuestion(
+            selectedQuestion,
             question,
             quizInfo.type,
             finalOptionType,
@@ -138,14 +179,53 @@ const QuizModalPage2 = (props) => {
             correctAnswer
         )
 
+        if(!a){
         setQuestionNumber([...questionNumber, questionNumber.length+1]);
+
+            reset();
+        }
+    }
+
+    const saveChanges = () => {
+        handleAddQuestion(true);
     }
 
     const handleQuestionSelect = (index) => {
+        if(index===selectedQuestion) return;
+        if(!questions[index]) {
+            reset();
+        }
         setSelectedQuestion(index);
         questionRef.current.value = questions[index].question;
         setQuestionType(questions[index].optionType);
         setSelectedTimer(questions[index].timer);
+
+        // set options
+        for(let i=0;i<questions[index].options.length;i++){
+            if(questions[index].options[i]!==undefined) optionRef[i].current.value = questions[index].options[i];
+            else optionRef[i].current = null;
+            if(questions[index].imageOptions[i]!==undefined) optionImgRef[i].current.value = questions[index].imageOptions[i];
+            else optionImgRef[i].current = null;
+        }
+    }
+
+    const reset = () => {
+         // reset all fields
+         questionRef.current.value = "";
+         optionRef[0].current.value = "";
+         optionRef[1].current.value = "";
+         optionRef[2].current = null;
+         optionRef[3].current = null;
+         optionImgRef[0].current = null;
+         optionImgRef[1].current = null;
+         optionImgRef[2].current = null;
+         optionImgRef[3].current = null;
+         setSelectedOption(-1);
+         setSelectedTimer("0");
+ 
+         setOptions(["option1", "option2"]);
+         setQuestionType("text");
+         setSelectedQuestion(questionNumber.length);
     }
 
     return (
@@ -154,16 +234,19 @@ const QuizModalPage2 = (props) => {
                 <div className="topbarleft">
                     {questionNumber.map((question, index) => {
                         return (
-                            <div key={index} className={`questionselector ${selectedQuestion===index&&"selected"}`}>
+                            <div onClick={()=> handleQuestionSelect(index)} key={index} className={`questionselector ${selectedQuestion===index&&"selected"}`}>
                                 <h6>{index + 1}</h6>
                             </div>
                         );
                     })}
-                    {questionNumber.length < 5 &&  <div onClick={handleAddQuestion} className="questionselector">
+                    {questionNumber.length < 5 &&  <div onClick={()=> handleAddQuestion(false)} className="questionselector">
                           <FiPlus />
                       </div>}
                 </div>
+                <div>
                 <h6>Max 5 questions</h6>
+                    <button onClick={saveChanges} className="confirmbtn oo">Save</button>
+                </div>
             </div>
             <div className="question">
                 <input ref={questionRef} type="text" placeholder="Poll Question" />

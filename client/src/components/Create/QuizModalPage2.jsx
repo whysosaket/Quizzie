@@ -5,7 +5,7 @@ import GlobalContext from "../../context/GlobalContext";
 import QuizContext from "../../context/QuizContext";
 
 const QuizModalPage2 = (props) => {
-  const { setShowModal } = props;
+  const { setShowModal, setCurrentPage } = props;
   const { toastMessage } = useContext(GlobalContext);
   const { cleanUp, createQuestion, quizInfo, questions, deleteQuestion, createQuiz } =
     useContext(QuizContext);
@@ -415,10 +415,14 @@ const QuizModalPage2 = (props) => {
         return;
     }
 
-    ans = await createQuiz();
-    if(ans){
-        toastMessage("Quiz created successfully", "success");
-    }
+    setTimeout(async () => {
+      ans = await createQuiz();
+      if(ans){
+          setCurrentPage(2);
+      }
+    }, 200);
+
+   
 
 }
 
@@ -438,7 +442,7 @@ const QuizModalPage2 = (props) => {
                 }`}
               >
                 <h6>{index + 1}</h6>
-                {index > 0 && (
+                {index === questionNumber.length-1 && index > 0 && (
                   <p
                     onClick={() => handleDeleteQuestion(index)}
                     className="cross"
@@ -553,7 +557,7 @@ const QuizModalPage2 = (props) => {
           )}
         </div>
         <div className="bottomright">
-          <div className="timeroptions">
+          {quizInfo.type!=="poll"&&<div className="timeroptions">
             <h6>Timer</h6>
             <div
               className={`timer ${selectedTimer === "0" && "selected"}`}
@@ -573,7 +577,7 @@ const QuizModalPage2 = (props) => {
             >
               10 sec
             </div>
-          </div>
+          </div>}
         </div>
       </div>
       <div className="cancelconfirm">

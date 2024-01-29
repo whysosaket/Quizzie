@@ -385,3 +385,7 @@
     cursor: pointer;
     left: 0.5rem;
 }
+
+.modal .share{
+    margin-top: 2rem;
+}

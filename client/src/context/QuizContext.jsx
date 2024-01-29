@@ -3,6 +3,7 @@ import { toast } from "react-toastify";
 
 const QuizContext = createContext();
 let url = import.meta.env.VITE_URL;
+let clientUrl = import.meta.env.VITE_CLIENT;
 
 const QuizState = (props) => {
 
@@ -15,18 +16,15 @@ const QuizState = (props) => {
 
     const [quizInfo, setQuizInfo] = useState({name: "", type: ""});
     const [questions, setQuestions] = useState([1,2,3,4,5]);
+    const [shareLink, setShareLink] = useState("");
 
     const cleanUp = () => {
         setQuizInfo({name: "", type: ""});
         setQuestions([]);
     }
 
-    const setName = (name) => {
-        setQuizInfo({...quizInfo, name});
-    }
-
-    const setType = (type) => {
-        setQuizInfo({...quizInfo, type});
+    const setInfo = (name, type) => {
+        setQuizInfo({name, type});
     }
 
     const createQuestion = (index, question, type, optionType, option1, option2, option3, option4, option1img, option2img, option3img, option4img, timer, correctAnswer) => {
@@ -47,14 +45,13 @@ const QuizState = (props) => {
                 option3img,
                 option4img
             ],
-            timer,
+            timer: Number(timer),
             correctAnswer
         }   
 
         const newQuestions = [...questions];
         newQuestions[index] = newQuestion;
         setQuestions(newQuestions);
-        console.log(newQuestions);
     }
 
     const deleteQuestion = async (index) => {
@@ -91,11 +88,11 @@ const QuizState = (props) => {
             console.log(data);
             if(data.success){
                 toastMessage(data.info, "success");
+                setShareLink(`${clientUrl}/${data.quizID}`);
                 cleanUp();
                 return true;
             }else{
                 toastMessage(data.error, "warning");
-                cleanUp();
                 return false;
             }
         } catch (error) {
@@ -109,7 +106,7 @@ const QuizState = (props) => {
    
 
     return (
-        <QuizContext.Provider value={{setName, setType, cleanUp, quizInfo, createQuestion, questions, deleteQuestion, createQuiz}}>
+        <QuizContext.Provider value={{setInfo,toastMessage,shareLink, cleanUp, quizInfo, createQuestion, questions, deleteQuestion, createQuiz}}>
             {props.children}
         </QuizContext.Provider>
     )

@@ -82,6 +82,7 @@ const createQuiz = async (req, res) => {
         optionType,
         correctAnswer,
         options,
+        imageOptions,
         type,
       } = question;
       if (questionText.length < 4) {
@@ -126,6 +127,7 @@ const createQuiz = async (req, res) => {
 
       for (let j = 0; j < options.length; j++) {
         let option = options[j];
+        if (option === null) continue;
         if (option.length < 1) {
           return res.json({
             success,
@@ -135,6 +137,22 @@ const createQuiz = async (req, res) => {
           });
         }
       }
+
+      // Validating each Image Option
+
+      for (let j = 0; j < imageOptions.length; j++) {
+        let option = imageOptions[j];
+        if (option === null) continue;
+        if (option.length < 1) {
+          return res.json({
+            success,
+            error: `Question ${i + 1} Option ${
+              j + 1
+            } must be at least 1 character long!`,
+          });
+        }
+      }
+
 
       // Validating correct Answer
 

@@ -31,6 +31,7 @@ const QuizModalPage1 = (props) => {
 
         setName(name);
         setType(type);
+        cleanUp();
         setCurrentPage(1);
     }
 

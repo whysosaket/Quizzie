@@ -1,5 +1,6 @@
 import React, { useContext, useRef, useState } from "react";
 import { FiPlus } from "react-icons/fi";
+import { IoSave } from "react-icons/io5";
 import { RiDeleteBin6Fill } from "react-icons/ri";
 import GlobalContext from '../../context/GlobalContext';
 import QuizContext from '../../context/QuizContext';
@@ -14,9 +15,10 @@ const QuizModalPage2 = (props) => {
     const [questionType, setQuestionType] = useState("text");
     const [selectedOption, setSelectedOption] = useState(-1);
     const [selectedTimer, setSelectedTimer] = useState("0");
-    const [options, setOptions] = useState(["option1", "option2"]);
-    const [questionNumber, setQuestionNumber] = useState([1]);
     const [selectedQuestion, setSelectedQuestion] = useState(0);
+    const [questionNumber, setQuestionNumber] = useState([0]);
+    const [options, setOptions] = useState([0, 1]);
+
 
 
     const handleCleanup = () => {
@@ -29,203 +31,295 @@ const QuizModalPage2 = (props) => {
     const optionImgRef = [useRef(), useRef(), useRef(), useRef()];
 
     const handleAddOption = ()=>{
-        if(options.length === 4){
+        if(options.length>3){
             toastMessage("Max 4 options allowed", "warning");
             return;
         }
-        setOptions([...options, "option"+(options.length+1)]);
+        setOptions([...options, options.length]);
     }
 
     const handleDeleteOption = (index)=>{
-      console.log(index);
-        if(options.length === 2){
-            toastMessage("Min 2 options required", "warning");
-            return;
-        }
-        let newOptions = [];
-        options.forEach((option, i)=>{
-            if(i!==index){
-                newOptions.push(option);
-            }
-        })
-        
-        if (index===2 && options.length===4){
-          if (optionRef[2].current)
+        if(index===2&&options.length>3){
+            if(optionRef[2].current)
             optionRef[2].current.value = optionRef[3].current.value;
-          if (optionImgRef[2].current)
+            if(optionImgRef[2].current)
             optionImgRef[2].current.value = optionImgRef[3].current.value;
         }
 
+        const newOptions = [...options];
+        newOptions.splice(index, 1);
         setOptions(newOptions);
-        setSelectedOption(-1);
 
+        if(selectedOption===index){
+            setSelectedOption(0);
+        }
+
+        if(selectedOption>index){
+            setSelectedOption(selectedOption-1);
+        }
+
+        optionRef.splice(index, 1);
+        optionImgRef.splice(index, 1);
+
+        if(index>=1){
+            optionRef[index-1].current.focus();
+        }
     }
 
-    const handleAddQuestion = (a) => {
+    const handleAddQuestion = () => {
+        let ans = saveChanges();
+        if(!ans) return;
+
+        if(questionNumber.length>4){
+            toastMessage("Max 5 questions allowed", "warning");
+            return;
+        }
+
+        const newQuestionNumber = [...questionNumber];
+        newQuestionNumber.push(questionNumber.length);
+        setQuestionNumber(newQuestionNumber);
+        setSelectedQuestion(questionNumber.length);
+        setSelectedOption(-1);
+        setQuestionType("text");
+        setSelectedTimer("0");
+        setOptions([0, 1]);
+
+        questionRef.current.value = "";
+        optionRef[0].current.value = "";
+        optionRef[1].current.value = "";
+    }
+
+    const saveChanges = () => {
         const question = questionRef.current.value;
-        if(!question){
+        if (!question) {
             toastMessage("Please enter a question", "warning");
             return;
         }
 
-        const optionType = questionType;
+        if(selectedOption===-1){
+            toastMessage("Please select an option", "warning");
+            return;
+        }
 
         let option1, option2, option3, option4, option1img, option2img, option3img, option4img;
-        if(optionRef[0].current) option1 = optionRef[0].current.value;
-        if(optionRef[1].current) option2 = optionRef[1].current.value;
-        if(optionRef[2].current) option3 = optionRef[2].current.value;
-        if(optionRef[3].current) option4 = optionRef[3].current.value;
 
-        if(optionImgRef[0].current) option1img = optionImgRef[0].current.value;
-        if(optionImgRef[1].current) option2img = optionImgRef[1].current.value;
-        if(optionImgRef[2].current) option3img = optionImgRef[2].current.value;
-        if(optionImgRef[3].current) option4img = optionImgRef[3].current.value;
-
-        if(optionImgRef[0].current && !optionImgRef[0].current.value){
-            toastMessage("Please enter image url for option 1", "warning");
-            return;
+        if(optionRef[0].current) {
+            if(!optionRef[0].current.value) {
+                toastMessage("Please enter option 1", "warning");
+                return;
+            }
+            option1 = optionRef[0].current.value;
         }
 
-        if(optionImgRef[1].current && !optionImgRef[1].current.value){
-            toastMessage("Please enter image url for option 2", "warning");
-            return;
+        if(optionRef[1].current) {
+            if(!optionRef[1].current.value) {
+                toastMessage("Please enter option 2", "warning");
+                return;
+            }
+            option2 = optionRef[1].current.value;
         }
 
-        if(optionImgRef[2].current && !optionImgRef[2].current.value){
-            toastMessage("Please enter image url for option 3", "warning");
-            return;
+        if(optionRef[2].current) {
+            if(!optionRef[2].current.value) {
+                toastMessage("Please enter option 3", "warning");
+                return;
+            }
+            option3 = optionRef[2].current.value;
         }
 
-        if(optionImgRef[3].current && !optionImgRef[3].current.value){
-            toastMessage("Please enter image url for option 4", "warning");
-            return;
+        if(optionRef[3].current) {
+            if(!optionRef[3].current.value) {
+                toastMessage("Please enter option 4", "warning");
+                return;
+            }
+            option4 = optionRef[3].current.value;
         }
 
-        if(optionRef[0].current && !optionRef[0].current.value){
-            toastMessage("Please enter text for option 1", "warning");
-            return;
+        if(optionImgRef[0].current) {
+            if(!optionImgRef[0].current.value) {
+                toastMessage("Please enter option 1 image URL", "warning");
+                return;
+            }
+            option1img = optionImgRef[0].current.value;
         }
 
-        if(optionRef[1].current && !optionRef[1].current.value){
-            toastMessage("Please enter text for option 2", "warning");
-            return;
+        if(optionImgRef[1].current) {
+            if(!optionImgRef[1].current.value) {
+                toastMessage("Please enter option 2 image URL", "warning");
+                return;
+            }
+            option2img = optionImgRef[1].current.value;
         }
 
-        if(optionRef[2].current && !optionRef[2].current.value){
-            toastMessage("Please enter text for option 3", "warning");
-            return;
+        if(optionImgRef[2].current) {
+
+            if(!optionImgRef[2].current.value) {
+                toastMessage("Please enter option 3 image URL", "warning");
+                return;
+            }
+            option3img = optionImgRef[2].current.value;
         }
 
-        if(optionRef[3].current && !optionRef[3].current.value){
-            toastMessage("Please enter text for option 4", "warning");
-            return;
+        if(optionImgRef[3].current) {
+            if(!optionImgRef[3].current.value) {
+                toastMessage("Please enter option 4 image URL", "warning");
+                return;
+            }
+            option4img = optionImgRef[3].current.value;
         }
 
+
+
+        let optionType = questionType;
+        if (questionType === "text") optionType = "text";
+        else if (questionType === "imageUrl") optionType = "img";
+        else if (questionType === "textAndImageUrl") optionType = "both";
         const timer = selectedTimer;
-        let correctAnswer;
-        if(optionType === "text"){
-            if (selectedOption === 0) correctAnswer = option1;
-            else if (selectedOption === 1) correctAnswer = option2;
-            else if (selectedOption === 2) correctAnswer = option3;
-            else if (selectedOption === 3) correctAnswer = option4;
-        }else if(optionType === "imageUrl"){
-            if (selectedOption === 0) correctAnswer = option1img;
-            else if (selectedOption === 1) correctAnswer = option2img;
-            else if (selectedOption === 2) correctAnswer = option3img;
-            else if (selectedOption === 3) correctAnswer = option4img;
-        }else if(optionType === "textAndImageUrl"){
-            if (selectedOption === 0) correctAnswer = option1 + " " + option1img;
-            else if (selectedOption === 1) correctAnswer = option2 + " " + option2img;
-            else if (selectedOption === 2) correctAnswer = option3 + " " + option3img;
-            else if (selectedOption === 3) correctAnswer = option4 + " " + option4img;
+        
+        let correctAnswer = "";
+        if (selectedOption === 0) {
+            if(optionRef[0].current) {
+                correctAnswer += optionRef[0].current.value;
+            }
+            correctAnswer += "@1&2^";
+            if(optionImgRef[0].current) {
+                correctAnswer += optionImgRef[0].current.value;
+            }
         }
 
-        // check if all options are filled
-        if((!option1 || !option2) && (!option1img || !option2img)){
-            toastMessage("Please enter atleast 2 options", "warning");
-            return;
+        if (selectedOption === 1) {
+            if(optionRef[1].current) {
+                correctAnswer += optionRef[1].current.value;
+            }
+            correctAnswer += "@1&2^";
+            if(optionImgRef[1].current) {
+                correctAnswer += optionImgRef[1].current.value;
+            }
         }
 
-        // check if correct answer is filled
-        if(!correctAnswer){
-            toastMessage("Please select a correct answer", "warning");
-            return;
-        } 
-
-        let finalOptionType;
-        if(optionType === "text"){
-            finalOptionType = "text";
-        }else if(optionType === "imageUrl"){
-            finalOptionType = "img";
-        }else if(optionType === "textAndImageUrl"){
-            finalOptionType = "both";
+        if (selectedOption === 2) {
+            if(optionRef[2].current) {
+                correctAnswer += optionRef[2].current.value;
+            }
+            correctAnswer += "@1&2^";
+            if(optionImgRef[2].current) {
+                correctAnswer += optionImgRef[2].current.value;
+            }
         }
 
-
-        createQuestion(
-            selectedQuestion,
-            question,
-            quizInfo.type,
-            finalOptionType,
-            optionRef[0].current,
-            optionRef[1].current,
-            optionRef[2].current,
-            optionRef[3].current,
-            optionImgRef[0].current,
-            optionImgRef[1].current,
-            optionImgRef[2].current,
-            optionImgRef[3].current,
-            timer,
-            correctAnswer
-        )
-
-        if(!a){
-        setQuestionNumber([...questionNumber, questionNumber.length+1]);
-
-            reset();
+        if (selectedOption === 3) {
+            if(optionRef[3].current) {
+                correctAnswer += optionRef[3].current.value;
+            }
+            correctAnswer += "@1&2^";
+            if(optionImgRef[3].current) {
+                correctAnswer += optionImgRef[3].current.value;
+            }
         }
-    }
 
-    const saveChanges = () => {
-        handleAddQuestion(true);
+        console.log(question, questionType, optionType, option1, option2, option3, option4, option1img, option2img, option3img, option4img, timer, correctAnswer);
+
+        createQuestion(selectedQuestion, question, questionType, optionType, option1, option2, option3, option4, option1img, option2img, option3img, option4img, timer, correctAnswer);
+        return true;
+
     }
 
     const handleQuestionSelect = (index) => {
-        if(index===selectedQuestion) return;
-        if(!questions[index]) {
-            reset();
-        }
-        setSelectedQuestion(index);
-        questionRef.current.value = questions[index].question;
-        setQuestionType(questions[index].optionType);
-        setSelectedTimer(questions[index].timer);
 
-        // set options
-        for(let i=0;i<questions[index].options.length;i++){
-            if(questions[index].options[i]!==undefined) optionRef[i].current.value = questions[index].options[i];
-            else optionRef[i].current = null;
-            if(questions[index].imageOptions[i]!==undefined) optionImgRef[i].current.value = questions[index].imageOptions[i];
-            else optionImgRef[i].current = null;
-        }
+        let ans = saveChanges();
+        if(!ans) return;
+
+        setSelectedQuestion(index);
+        setSelectedOption(-1);
+        setQuestionType("text");
+        setSelectedTimer("0");
+        setOptions([0, 1]);
+        populate(index);
+      
     }
 
     const reset = () => {
-         // reset all fields
-         questionRef.current.value = "";
-         optionRef[0].current.value = "";
-         optionRef[1].current.value = "";
-         optionRef[2].current = null;
-         optionRef[3].current = null;
-         optionImgRef[0].current = null;
-         optionImgRef[1].current = null;
-         optionImgRef[2].current = null;
-         optionImgRef[3].current = null;
-         setSelectedOption(-1);
-         setSelectedTimer("0");
- 
-         setOptions(["option1", "option2"]);
-         setQuestionType("text");
-         setSelectedQuestion(questionNumber.length);
+  
+    }
+
+    const populate = async (index) => {
+        if (!questions[index].value) reset();
+
+        if (questions[index].optionType === "text") setQuestionType("text");
+        else if (questions[index].optionType === "img") setQuestionType("imageUrl");
+        else if (questions[index].optionType === "both") setQuestionType("textAndImageUrl");
+
+        let ca = questions[index].correctAnswer;
+        if (questions[index].optionType === "text") {
+            let ans = ca.split("@1&2^");
+            if (ans[0] === questions[index].options[0]) setSelectedOption(0);
+            else if (ans[0] === questions[index].options[1]) setSelectedOption(1);
+            else if (ans[0] === questions[index].options[2]) setSelectedOption(2);
+            else if (ans[0] === questions[index].options[3]) setSelectedOption(3);
+        } else if (questions[index].optionType === "img") {
+            let ans = ca.split("@1&2^");
+            if (ans[1] === questions[index].imageOptions[0]) setSelectedOption(0);
+            else if (ans[1] === questions[index].imageOptions[1]) setSelectedOption(1);
+            else if (ans[1] === questions[index].imageOptions[2]) setSelectedOption(2);
+            else if (ans[1] === questions[index].imageOptions[3]) setSelectedOption(3);
+        } else if (questions[index].optionType === "both") {
+            let ans = ca.split("@1&2^");
+            if (ans[0] === questions[index].options[0] && ans[1] === questions[index].imageOptions[0]) setSelectedOption(0);
+            else if (ans[0] === questions[index].options[1] && ans[1] === questions[index].imageOptions[1]) setSelectedOption(1);
+            else if (ans[0] === questions[index].options[2] && ans[1] === questions[index].imageOptions[2]) setSelectedOption(2);
+            else if (ans[0] === questions[index].options[3] && ans[1] === questions[index].imageOptions[3]) setSelectedOption(3);
+        }
+        setSelectedTimer(questions[index].timer);
+
+        questionRef.current.value = questions[index].question;
+        if(questions[index].options[0]) {
+            setTimeout(() => {
+            optionRef[0].current.value = questions[index].options[0];
+            }, 100);
+        }
+        if(questions[index].options[1]) {
+            setTimeout(() => {
+            optionRef[1].current.value = questions[index].options[1];
+            }, 100);
+        }
+        if(questions[index].options[2]) {
+            setOptions([1,2,3]);
+            setTimeout(() => {
+            optionRef[2].current.value = questions[index].options[2];
+            }, 100);
+        }
+        if(questions[index].options[3]) {
+            setOptions([1,2,3,4]);
+            setTimeout(() => {
+            optionRef[3].current.value = questions[index].options[3];
+            }, 100);
+        }
+
+        if(questions[index].imageOptions[0]) {
+            setTimeout(() => {
+            optionImgRef[0].current.value = questions[index].imageOptions[0];
+            }
+            , 100);
+        }
+        if(questions[index].imageOptions[1]) {
+            setTimeout(() => {
+            optionImgRef[1].current.value = questions[index].imageOptions[1];
+            }, 100);
+        }
+        if(questions[index].imageOptions[2]){
+            setOptions([1,2,3]);
+            setTimeout(() => {
+            optionImgRef[2].current.value = questions[index].imageOptions[2];
+            }, 100);
+        }
+        if(questions[index].imageOptions[3]){
+            setOptions([1,2,3,4]);
+            setTimeout(() => {
+            optionImgRef[3].current.value = questions[index].imageOptions[3];
+            }, 100);
+        }
+
+
     }
 
     return (
@@ -239,13 +333,14 @@ const QuizModalPage2 = (props) => {
                             </div>
                         );
                     })}
-                    {questionNumber.length < 5 &&  <div onClick={()=> handleAddQuestion(false)} className="questionselector">
+                    {questionNumber.length < 5 &&  <div onClick={handleAddQuestion} className="questionselector">
                           <FiPlus />
                       </div>}
+                      <IoSave onClick={saveChanges} className="questionselector saveicon" />
                 </div>
                 <div>
                 <h6>Max 5 questions</h6>
-                    <button onClick={saveChanges} className="confirmbtn oo">Save</button>
+                    {/* <button onClick={saveChanges} className="confirmbtn oo">Save</button> */}
                 </div>
             </div>
             <div className="question">

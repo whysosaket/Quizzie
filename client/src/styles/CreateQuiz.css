@@ -366,3 +366,14 @@
 .confirmbtn.oo:hover{
     background-color: #3f8f2b;
 }
+
+.saveicon{
+    margin-left: 0.5rem;
+    cursor: pointer;
+    color: #60B84B;
+}
+
+.saveicon:hover{
+    color: #3f8f2b;
+    background-color: white;
+}

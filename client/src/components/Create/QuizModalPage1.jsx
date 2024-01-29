@@ -28,10 +28,9 @@ const QuizModalPage1 = (props) => {
             toastMessage("Please select a type for the quiz", "warning");
             return;
         }
-
+        cleanUp();
         setName(name);
         setType(type);
-        cleanUp();
         setCurrentPage(1);
     }
 

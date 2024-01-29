@@ -21,6 +21,11 @@ const Questions = () => {
 
   useEffect(() => {
     let countdown;
+    console.log(takeQuizQuestions[questionNumber]);
+
+    if(takeQuizQuestions[questionNumber] && takeQuizQuestions[questionNumber].timer === 0){
+        return () => clearInterval(countdown);
+    }
 
     if (isStarted && timer >= 0) {
       countdown = setInterval(() => {
@@ -33,10 +38,7 @@ const Questions = () => {
         // takeQuiz(takeQuizInfo.quizID, answers);
         let newAnswers = [...answers];
         newAnswers.push(selected);
-
         let finalAnswers = [];
-
-        
         for(let i=0; i<takeQuizInfo.questions.length; i++){
             let ans = "";
             if(takeQuizQuestions[i].optionType === "text"){
@@ -56,12 +58,10 @@ const Questions = () => {
 
         // takeQuiz(takeQuizInfo.quizID, finalAnswers);
         console.log(finalAnswers);
-
-        
     }
 
     return () => clearInterval(countdown);
-  }, [isStarted, timer]);
+  }, [isStarted, timer, questionNumber]);
 
   const startQuiz = async () => {
     setTimer(takeQuizQuestions[0].timer);
@@ -79,6 +79,7 @@ const Questions = () => {
     setAnswers(newAnswers);
     setSelected(-1);
     setQuestionNumber(questionNumber+1);
+    setTimer(takeQuizQuestions[questionNumber+1].timer);
   }
 
 

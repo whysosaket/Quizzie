@@ -8,6 +8,8 @@ const User = require("../models/User");
 const convertToTitleCase = require("../utils/makeTitleCase");
 const generateQuizID = require("../utils/generateQuizID");
 
+const delimeter = "@1&2^";
+
 const createQuiz = async (req, res) => {
   let success = false;
 
@@ -435,4 +437,21 @@ const getTrending = async (req, res) => {
   }
 }
 
-module.exports = { createQuiz, getQuiz, takeQuiz, deleteQuiz, takePoll, getTrending };
+const getQuestion = async (req, res) => {
+
+  const { questionID } = req.params;
+  try{
+    const question = await Question.findOne({_id: questionID});
+    if(!question){
+      return res.json({error: "Question Not Found!"});
+    }
+
+    return res.json({success: true, question});
+  }
+  catch(error){
+    console.log(error);
+    return res.json({error: "Something Went Wrong!"});
+  }
+}
+
+module.exports = { createQuiz, getQuiz, takeQuiz, deleteQuiz, takePoll, getTrending, getQuestion };

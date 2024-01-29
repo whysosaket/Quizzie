@@ -102,11 +102,94 @@ const QuizState = (props) => {
         
     }
 
+    // QUIZ Section
+
+    const [takeQuizInfo, setTakeQuizInfo] = useState({name: "", type: "", question: "", questions: [], quizID: ""});
+    const [takeQuizAnswers, setTakeQuizAnswers] = useState([]);
+    const [takeQuizQuestions, setTakeQuizQuestions] = useState([]);
+    const [result, setResult] = useState({score: 0, total: 0});
+
+    const getQuiz = async (quizID) => {
+        try {
+            const response = await fetch(`${url}/api/quiz/${quizID}`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+            const data = await response.json();
+            if(data.success){
+                const {name, type, question, questions, quizID} = data.quiz;
+                setTakeQuizInfo({name, type, question, questions, quizID});
+                let newQuestions = [];
+                for(let i=0; i<questions.length; i++){
+                    let ques = await getQuestion(questions[i]);
+                    newQuestions.push(ques);
+                }
+                setTakeQuizQuestions(newQuestions);
+                return true;
+            }else{
+                toastMessage(data.error, "warning");
+                return false;
+            }
+        } catch (error) {
+            console.log(error);
+            return false;
+        }
+    }
+
+    const getQuestion = async (questionID) => {
+        try {
+            const response = await fetch(`${url}/api/question/${questionID}`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+            const data = await response.json();
+            if(data.success){
+                return data.question;
+            }else{
+                toastMessage(data.error, "warning");
+                return false;
+            }
+        } catch (error) {
+            console.log(error);
+            return false;
+        }
+    }
+
+    const takeQuiz = async (quizID, answers) => {
+        const body = {quizID, answers};
+        try {
+            const response = await fetch(`${url}/api/quiz/${quizID}`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(body)
+            });
+            const data = await response.json();
+            if(data.success){
+                const {score, total} = data;
+                setResult({score, total});
+                return true;
+            }else{
+                toastMessage(data.error, "warning");
+                return false;
+            }
+        } catch (error) {
+            console.log(error);
+            return false;
+        }
+    }
+
+
 
    
 
     return (
-        <QuizContext.Provider value={{setInfo,toastMessage,shareLink, cleanUp, quizInfo, createQuestion, questions, deleteQuestion, createQuiz}}>
+        <QuizContext.Provider value={{getQuiz,takeQuizQuestions,takeQuizInfo, takeQuiz, setInfo,toastMessage,shareLink, cleanUp, quizInfo, createQuestion, questions, deleteQuestion, createQuiz}}>
             {props.children}
         </QuizContext.Provider>
     )

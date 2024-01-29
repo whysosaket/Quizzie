@@ -57,11 +57,11 @@ body {
 }
 
 .options .option {
+  cursor: pointer;
   background-color: #f0f0f0;
   padding: 1rem;
   border-radius: 12px;
   margin: 1rem 3rem;
-  cursor: pointer;
   width: 30%;
   font-size: 1.2rem;
 }
@@ -91,9 +91,34 @@ body {
   padding: 1rem 5rem;
   margin: auto;
   text-align: center;
+  cursor: pointer;
 }
 
 .quizcontainer .submitbtn:hover {
   background-color: #4a8d39;
   color: white;
+}
+
+.questions.startquiz{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+.questions .startquizbtn{
+    background-color: #60B84B;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 2rem 8rem;
+    margin: auto;
+    text-align: center;
+    cursor: pointer;
+    font-size: 2rem;
+}
+
+.questions.startquiz h1{
+   font-size: 4rem;
 }

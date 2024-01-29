@@ -13,12 +13,12 @@ const PollBox = (props) => {
           <h1>{question.optedOption2}</h1>
           <h3>{question.options[1]}</h3>
         </div>
-        {question.options.length>=3 &&
+        {question.options[2] &&
         <div className="box poll">
           <h1>{question.optedOption3}</h1>
           <h3>{question.options[2]}</h3>
         </div>}
-        {question.options.length>=4 &&
+        {question.options[2] &&
         <div className="box poll">
           <h1>{question.optedOption4}</h1>
           <h3>{question.options[3]}</h3>

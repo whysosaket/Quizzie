@@ -88,7 +88,7 @@ const QuizState = (props) => {
             console.log(data);
             if(data.success){
                 toastMessage(data.info, "success");
-                setShareLink(`${clientUrl}/${data.quizID}`);
+                setShareLink(`${clientUrl}/quiz/${data.quizID}`);
                 cleanUp();
                 return true;
             }else{

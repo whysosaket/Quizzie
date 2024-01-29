@@ -184,12 +184,35 @@ const QuizState = (props) => {
         }
     }
 
+    const takePoll = async (quizID, answers) => {
+        const body = {quizID, answers};
+        try {
+            const response = await fetch(`${url}/api/poll/${quizID}`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(body)
+            });
+            const data = await response.json();
+            if(data.success){
+                return true;
+            }else{
+                toastMessage(data.error, "warning");
+                return false;
+            }
+        } catch (error) {
+            console.log(error);
+            return false;
+        }
+    }
+
 
 
    
 
     return (
-        <QuizContext.Provider value={{result, getQuiz,takeQuizQuestions,takeQuizInfo, takeQuiz, setInfo,toastMessage,shareLink, cleanUp, quizInfo, createQuestion, questions, deleteQuestion, createQuiz}}>
+        <QuizContext.Provider value={{result,takePoll, getQuiz,takeQuizQuestions,takeQuizInfo, takeQuiz, setInfo,toastMessage,shareLink, cleanUp, quizInfo, createQuestion, questions, deleteQuestion, createQuiz}}>
             {props.children}
         </QuizContext.Provider>
     )

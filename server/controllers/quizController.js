@@ -156,8 +156,6 @@ const createQuiz = async (req, res) => {
 
 
       // Validating correct Answer
-      console.log(correctAnswer, optionType, type);
-
       if (optionType === "text" || optionType === "both") {
         if (type === "poll") {
           correctAnswer = "NA";
@@ -349,23 +347,33 @@ const takePoll = async (req, res) => {
     for (let i = 0; i < questions.length; i++) {
       let question = questions[i];
       let answer = answers[i];
+      answer = answer.split(delimeter)[0];
 
       let ques = await Question.findOne({ _id: question });
       if (!ques) {
         return res.json({ success, error: "Question Not Found!" });
       }
 
-      if (answer !== "") {
-        return res.json({ success, error: "Poll can't have answers!" });
+      if (ques.optionType === "text"){
+        if (answer === ques.options[0]) ques.optedOption1 += 1;
+        else if (answer === ques.options[1]) ques.optedOption2 += 1;
+        else if (answer === ques.options[2]) ques.optedOption3 += 1;
+        else if (answer === ques.options[3]) ques.optedOption4 += 1;
       }
 
-      for (let j = 0; j < ques.options.length; j++) {
-        let option = ques.options[j];
-        if (option === answer) {
-          ques[`optedOption${j + 1}`] = ques[`optedOption${j + 1}`] + 1;
-          break;
-        }
+      if(ques.optionType === "img"){
+        if (answer === ques.imageOptions[0]) ques.optedOption1 += 1; 
+        else if (answer === ques.imageOptions[1]) ques.optedOption2 += 1;
+        else if (answer === ques.imageOptions[2]) ques.optedOption3 += 1;
+        else if (answer === ques.imageOptions[3]) ques.optedOption4 += 1;
       }
+
+      // if(question.optionType === "both"){
+      //   if (answer === question.options[0]) ques.optedOption1 = ques.optedOption1 + 1;
+      //   else if (answer === question.options[1]) ques.optedOption2 = ques.optedOption2 + 1;
+      //   else if (answer === question.options[2]) ques.optedOption3 = ques.optedOption3 + 1;
+      //   else if (answer === question.options[3]) ques.optedOption4 = ques.optedOption4 + 1;
+      // }
 
       ques.attempts = ques.attempts + 1;
       await ques.save();

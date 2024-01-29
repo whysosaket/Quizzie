@@ -6,7 +6,7 @@ const delimeter = "@1&2^";
 
 const Questions = (props) => {
   const location = useLocation();
-  const { getQuiz, takeQuiz, takeQuizQuestions, takeQuizInfo } = useContext(QuizContext);
+  const { getQuiz, takeQuiz, takePoll, takeQuizQuestions, takeQuizInfo } = useContext(QuizContext);
   const {setIsFinished} = props;
 
   const [questionNumber, setQuestionNumber] = useState(0);
@@ -79,6 +79,11 @@ const Questions = (props) => {
                 ans += takeQuizQuestions[i].imageOptions[newAnswers[i]];
             }
             finalAnswers.push(ans);
+        }
+        if (takeQuizInfo.type === "poll") {
+            await takePoll(takeQuizInfo.quizID, finalAnswers);
+            setIsFinished(true);
+            return;
         }
         await takeQuiz(takeQuizInfo.quizID, finalAnswers);
         setIsFinished(true);

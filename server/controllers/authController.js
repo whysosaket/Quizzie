@@ -11,6 +11,10 @@ const isValidEmail = require("../utils/isValidEmail");
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
+const convertToK = (num) => {
+  return num > 999 ? (num / 1000).toFixed(1) + "K" : num;
+};
+
 const createUser = async (req, res) => {
   let success = false;
 
@@ -99,12 +103,20 @@ const loginUser = async (req, res) => {
 const getUser = async (req, res) => {
     let success = false;
     try{
-        const user = await User.findById(req.user.id).select("-password");
+        let user = await User.findById(req.user.id).select("-password");
         if (!user) {
             return res.json({ success, error: "User Not Found!" });
         }
+
+        let newUser = {
+            ...user._doc,
+            quizCreated: convertToK(user.quizCreated),
+            questionsCreated: convertToK(user.questionsCreated),
+            totalImpressions: convertToK(user.totalImpressions),
+        };
+
         success = true;
-        return res.json({success, user});
+        return res.json({success, user: newUser});
     }
     catch (error){
         console.log(error);

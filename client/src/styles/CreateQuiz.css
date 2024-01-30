@@ -389,3 +389,28 @@
 .modal .share{
     margin-top: 2rem;
 }
+
+@media screen and (max-width: 768px){
+    .modal{
+        height: 100%;
+        width: 100%;
+    }
+
+    .modal .page{
+        width: 80%;
+        height: 40%;
+    }
+
+    .modal .quiztype{
+        flex-direction: column;
+    }
+
+    .modal .quiztypebtns{
+        flex-direction: column;
+    }
+
+    .modal .quiztypebtns button{
+        width: 100%;
+        margin: 0.5rem 0;
+    }
+}

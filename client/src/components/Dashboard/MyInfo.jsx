@@ -3,7 +3,6 @@ import GlobalContext from "../../context/GlobalContext";
 
 const MyInfo = () => {
   const { user, getInfo } = useContext(GlobalContext);
-
   useEffect(() => {
     getInfo();
   }, []);

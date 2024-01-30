@@ -66,6 +66,25 @@ body {
   font-size: 1.2rem;
 }
 
+.options img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+.option.both img{
+  width: 50%;
+  margin-left: 0.5rem;
+}
+
+.option.both{
+  padding: 1rem 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .options .option:hover {
   background-color: #60b84b;
   color: white;

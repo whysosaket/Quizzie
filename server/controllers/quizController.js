@@ -347,11 +347,18 @@ const takePoll = async (req, res) => {
     for (let i = 0; i < questions.length; i++) {
       let question = questions[i];
       let answer = answers[i];
-      answer = answer.split(delimeter)[0];
 
       let ques = await Question.findOne({ _id: question });
       if (!ques) {
         return res.json({ success, error: "Question Not Found!" });
+      }
+
+      if(ques.optionType === "text"){
+        answer = answer.split(delimeter)[0];
+      }else if(ques.optionType === "img"){
+        answer = answer.split(delimeter)[1];
+      }else if(ques.optionType === "both"){
+        answer = answer.split(delimeter)[0] + answer.split(delimeter)[1];
       }
 
       if (ques.optionType === "text"){
@@ -368,12 +375,12 @@ const takePoll = async (req, res) => {
         else if (answer === ques.imageOptions[3]) ques.optedOption4 += 1;
       }
 
-      // if(question.optionType === "both"){
-      //   if (answer === question.options[0]) ques.optedOption1 = ques.optedOption1 + 1;
-      //   else if (answer === question.options[1]) ques.optedOption2 = ques.optedOption2 + 1;
-      //   else if (answer === question.options[2]) ques.optedOption3 = ques.optedOption3 + 1;
-      //   else if (answer === question.options[3]) ques.optedOption4 = ques.optedOption4 + 1;
-      // }
+      if(ques.optionType === "both"){
+        if (answer === ques.options[0] + ques.imageOptions[0]) ques.optedOption1 += 1;
+        else if (answer === ques.options[1] + ques.imageOptions[1]) ques.optedOption2 += 1;
+        else if (answer === ques.options[2] + ques.imageOptions[2]) ques.optedOption3 += 1;
+        else if (answer === ques.options[3] + ques.imageOptions[3]) ques.optedOption4 += 1;
+      }
 
       ques.attempts = ques.attempts + 1;
       await ques.save();

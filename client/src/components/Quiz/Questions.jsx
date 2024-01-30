@@ -112,7 +112,28 @@ const Questions = (props) => {
               {takeQuizQuestions[questionNumber].options[3] &&
               <div onClick={()=> handleSelected(3)} className={`option ${selected===3&&"selected"}`}>{takeQuizQuestions[questionNumber].options[3]}</div>}
           </div>
-  
+        }
+        {
+          takeQuizQuestions[questionNumber] && takeQuizQuestions[questionNumber].optionType === "img" &&
+          <div className="options">
+              <div onClick={()=> handleSelected(0)} className={`option ${selected===0&&"selected"}`}><img src={takeQuizQuestions[questionNumber].imageOptions[0]} alt="option1" /></div>
+              <div onClick={()=> handleSelected(1)} className={`option ${selected===1&&"selected"}`}><img src={takeQuizQuestions[questionNumber].imageOptions[1]} alt="option2" /></div>
+              {takeQuizQuestions[questionNumber].imageOptions[2] &&
+              <div onClick={()=> handleSelected(2)} className={`option ${selected===2&&"selected"}`}><img src={takeQuizQuestions[questionNumber].imageOptions[2]} alt="option3" /></div>}
+              {takeQuizQuestions[questionNumber].imageOptions[3] &&
+              <div onClick={()=> handleSelected(3)} className={`option ${selected===3&&"selected"}`}><img src={takeQuizQuestions[questionNumber].imageOptions[3]} alt="option4" /></div>}
+          </div>
+        }
+        {
+          takeQuizQuestions[questionNumber] && takeQuizQuestions[questionNumber].optionType === "both" &&
+          <div className="options">
+              <div onClick={()=> handleSelected(0)} className={`option both ${selected===0&&"selected"}`}>{takeQuizQuestions[questionNumber].options[0]}<img src={takeQuizQuestions[questionNumber].imageOptions[0]} alt="option1" /></div>
+              <div onClick={()=> handleSelected(1)} className={`option both ${selected===1&&"selected"}`}>{takeQuizQuestions[questionNumber].options[1]}<img src={takeQuizQuestions[questionNumber].imageOptions[1]} alt="option2" /></div>
+              {takeQuizQuestions[questionNumber].imageOptions[2] &&
+              <div onClick={()=> handleSelected(2)} className={`option both ${selected===2&&"selected"}`}>{takeQuizQuestions[questionNumber].options[2]}<img src={takeQuizQuestions[questionNumber].imageOptions[2]} alt="option3" /></div>}
+              {takeQuizQuestions[questionNumber].imageOptions[3] &&
+              <div onClick={()=> handleSelected(3)} className={`option both ${selected===3&&"selected"}`}>{takeQuizQuestions[questionNumber].options[3]}<img src={takeQuizQuestions[questionNumber].imageOptions[3]} alt="option4" /></div>}
+          </div>
         }
         <div className="submit">
           {

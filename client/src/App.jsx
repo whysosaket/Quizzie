@@ -26,10 +26,6 @@ function App() {
             <Route exact path="/" element={<Home />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/quiz/:id" element={<Quiz />} />
-            {/* <Route path="/checkout">
-                    <Route path="" element={<Checkout />} />
-                    <Route path=":id" element={<Checkout buyNow={true} />} />
-                  </Route> */}
           </Routes>
         </div>
       </Router>

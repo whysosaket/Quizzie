@@ -60,6 +60,8 @@ const QuizModalPage2 = (props) => {
     if (index >= 1) {
       optionRef[index - 1].current.focus();
     }
+
+    handleSoftChange();
   };
 
   const handleAddQuestion = () => {
@@ -241,22 +243,6 @@ const QuizModalPage2 = (props) => {
       }
     }
 
-    console.log(
-      question,
-      quizInfo.type,
-      optionType,
-      option1,
-      option2,
-      option3,
-      option4,
-      option1img,
-      option2img,
-      option3img,
-      option4img,
-      timer,
-      correctAnswer
-    );
-
     createQuestion(
       selectedQuestion,
       question,
@@ -421,12 +407,137 @@ const QuizModalPage2 = (props) => {
           setCurrentPage(2);
       }
     }, 200);
-
-   
-
 }
 
+const softSaveChanges = () => {
+  const question = questionRef.current.value;
+  if (!question) {
+    return;
+  }
 
+  let option1, option2, option3, option4, option1img, option2img, option3img, option4img;
+
+  if (optionRef[0].current) {
+    option1 = optionRef[0].current.value;
+  }
+
+  if (optionRef[1].current) {
+    option2 = optionRef[1].current.value;
+  }
+
+  if (optionRef[2].current) {
+    option3 = optionRef[2].current.value;
+  }
+
+  if (optionRef[3].current) {
+    option4 = optionRef[3].current.value;
+  }
+
+  if (optionImgRef[0].current) {
+    option1img = optionImgRef[0].current.value;
+  }
+
+  if (optionImgRef[1].current) {
+    option2img = optionImgRef[1].current.value;
+  }
+
+  if (optionImgRef[2].current) {
+    option3img = optionImgRef[2].current.value;
+  }
+
+  if (optionImgRef[3].current) {
+    option4img = optionImgRef[3].current.value;
+  }
+
+  let optionType = questionType;
+  if (questionType === "text") optionType = "text";
+  else if (questionType === "imageUrl") optionType = "img";
+  else if (questionType === "textAndImageUrl") optionType = "both";
+  const timer = selectedTimer;
+
+  let correctAnswer = "";
+  if (selectedOption === 0) {
+    if (optionRef[0].current) {
+      correctAnswer += optionRef[0].current.value;
+    }
+    correctAnswer += "@1&2^";
+    if (optionImgRef[0].current) {
+      correctAnswer += optionImgRef[0].current.value;
+    }
+  }
+
+  if (selectedOption === 1) {
+    if (optionRef[1].current) {
+      correctAnswer += optionRef[1].current.value;
+    }
+    correctAnswer += "@1&2^";
+    if (optionImgRef[1].current) {
+      correctAnswer += optionImgRef[1].current.value;
+    }
+  }
+
+  if (selectedOption === 2) {
+    if (optionRef[2].current) {
+      correctAnswer += optionRef[2].current.value;
+    }
+    correctAnswer += "@1&2^";
+    if (optionImgRef[2].current) {
+      correctAnswer += optionImgRef[2].current.value;
+    }
+  }
+
+  if (selectedOption === 3) {
+    if (optionRef[3].current) {
+      correctAnswer += optionRef[3].current.value;
+    }
+    correctAnswer += "@1&2^";
+    if (optionImgRef[3].current) {
+      correctAnswer += optionImgRef[3].current.value;
+    }
+  }
+
+  createQuestion(
+    selectedQuestion,
+    question,
+    questionType,
+    optionType,
+    option1,
+    option2,
+    option3,
+    option4,
+    option1img,
+    option2img,
+    option3img,
+    option4img,
+    timer,
+    correctAnswer
+  );
+};
+
+const handleSoftChange = () => {
+  softSaveChanges();
+};
+
+const handleSelectOption = (index) => {
+  setSelectedOption(index);
+  setTimeout(() => {
+    softSaveChanges();
+  }, 100);
+}
+
+const handleSelectTimer = (index) => {
+  setSelectedTimer(index);
+  setTimeout(() => {
+    softSaveChanges();
+  }, 100);
+}
+
+const handleSelectOptionType = (index) => {
+  setQuestionType(index);
+  setTimeout(() => {
+    softSaveChanges();
+  }, 100);
+}
 
   return (
     <div className="page page2">
@@ -465,7 +576,7 @@ const QuizModalPage2 = (props) => {
         </div>
       </div>
       <div className="question">
-        <input ref={questionRef} type="text" placeholder="Poll Question" />
+        <input onChange={handleSoftChange} ref={questionRef} type="text" placeholder="Poll Question" />
       </div>
       <div className="questiontype">
         <p>Question Type</p>
@@ -477,7 +588,7 @@ const QuizModalPage2 = (props) => {
               className="btnopt"
               value="text"
               checked={questionType === "text"}
-              onChange={() => setQuestionType("text")}
+              onChange={() => handleSelectOptionType("text")}
             />
             Text
           </label>
@@ -488,7 +599,7 @@ const QuizModalPage2 = (props) => {
               className="btnopt"
               value="imageUrl"
               checked={questionType === "imageUrl"}
-              onChange={() => setQuestionType("imageUrl")}
+              onChange={() => handleSelectOptionType("imageUrl")}
             />
             Image URL
           </label>
@@ -499,7 +610,7 @@ const QuizModalPage2 = (props) => {
               className="btnopt"
               value="textAndImageUrl"
               checked={questionType === "textAndImageUrl"}
-              onChange={() => setQuestionType("textAndImageUrl")}
+              onChange={() => handleSelectOptionType("textAndImageUrl")}
             />
             Text & Image URL
           </label>
@@ -518,7 +629,7 @@ const QuizModalPage2 = (props) => {
                     className="btnopt"
                     value={option}
                     checked={selectedOption === index}
-                    onChange={() => setSelectedOption(index)}
+                    onChange={() => handleSelectOption(index)}
                   />}
                   {(questionType === "text" ||
                     questionType === "textAndImageUrl") && (
@@ -527,6 +638,7 @@ const QuizModalPage2 = (props) => {
                       className={`${selectedOption === index && "selected"}`}
                       type="text"
                       placeholder="Text"
+                      onChange={handleSoftChange}
                     />
                   )}
                   {(questionType === "imageUrl" ||
@@ -538,12 +650,13 @@ const QuizModalPage2 = (props) => {
                       } imageoption`}
                       type="text"
                       placeholder="Image URL"
+                      onChange={handleSoftChange }
                     />
                   )}
                 </label>
                 {index > 1 && (
                   <RiDeleteBin6Fill
-                    onClick={() => handleDeleteOption(index)}
+                    onClick={() => {handleDeleteOption(index);}}
                     className="deleteicon"
                   />
                 )}
@@ -562,19 +675,19 @@ const QuizModalPage2 = (props) => {
             <h6>Timer</h6>
             <div
               className={`timer ${selectedTimer === "0" && "selected"}`}
-              onClick={() => setSelectedTimer("0")}
+              onClick={() => handleSelectTimer("0")}
             >
               OFF
             </div>
             <div
               className={`timer ${selectedTimer === "5" && "selected"}`}
-              onClick={() => setSelectedTimer("5")}
+              onClick={() => handleSelectTimer("5")}
             >
               5 sec
             </div>
             <div
               className={`timer ${selectedTimer === "10" && "selected"}`}
-              onClick={() => setSelectedTimer("10")}
+              onClick={() => handleSelectTimer("10")}
             >
               10 sec
             </div>

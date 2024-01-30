@@ -122,3 +122,35 @@ body {
 .questions.startquiz h1{
    font-size: 4rem;
 }
+
+@media screen and (max-width: 768px){
+  
+  .questions .startquizbtn{
+    width: 100%;
+    padding: 1rem 4rem;
+    font-size: 1rem;
+  }
+
+  .quizcompleted{
+    width: 100%;
+  }
+
+  .quizcontainer{
+    width: 80%;
+  }
+
+  .quizcompleted .thankyou{
+    font-size: 1.5rem;
+
+  }
+
+  .options{
+    justify-content: center;
+  }
+
+  .options .option{
+    width: 100%;
+    text-align: center;
+  }
+
+}

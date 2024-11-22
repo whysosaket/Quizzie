@@ -4,9 +4,11 @@ dotenv.config();
 const Quiz = require("../models/Quiz");
 const Question = require("../models/Question");
 const User = require("../models/User");
+const QuizResult = require("../models/QuizResult");
 
 const convertToTitleCase = require("../utils/makeTitleCase");
 const generateQuizID = require("../utils/generateQuizID");
+const QuizResult = require("../models/QuizResult");
 
 const delimeter = "@1&2^";
 
@@ -98,7 +100,7 @@ const createQuiz = async (req, res) => {
         if (
           question.timer !== 5 &&
           question.timer !== 10 &&
-          question.timer !== 0
+          question.timer !== 50
         ) {
           return res.json({
             success,
@@ -153,7 +155,6 @@ const createQuiz = async (req, res) => {
           });
         }
       }
-
 
       // Validating correct Answer
       if (optionType === "text" || optionType === "both") {
@@ -328,6 +329,28 @@ const takeQuiz = async (req, res) => {
   }
 };
 
+const save_score = async (req, res) => {
+  const { quizID, email, regNo, score, total } = req.body;
+
+  try {
+    const existingResult = await QuizResult.findOne({ email, regNo });
+    if (existingResult) {
+      return res
+        .status(400)
+        .json({ success: false, error: "You have already taken this quiz." });
+    }
+
+    // Save
+    const result = new QuizResult({ quizID, email, regNo, score, total });
+    await result.save();
+
+    res.json({ success: true, message: "Score saved successfully!" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, error: "Failed to save score." });
+  }
+};
+
 const takePoll = async (req, res) => {
   let success = false;
   let quizID = req.params.quizID;
@@ -353,33 +376,37 @@ const takePoll = async (req, res) => {
         return res.json({ success, error: "Question Not Found!" });
       }
 
-      if(ques.optionType === "text"){
+      if (ques.optionType === "text") {
         answer = answer.split(delimeter)[0];
-      }else if(ques.optionType === "img"){
+      } else if (ques.optionType === "img") {
         answer = answer.split(delimeter)[1];
-      }else if(ques.optionType === "both"){
+      } else if (ques.optionType === "both") {
         answer = answer.split(delimeter)[0] + answer.split(delimeter)[1];
       }
 
-      if (ques.optionType === "text"){
+      if (ques.optionType === "text") {
         if (answer === ques.options[0]) ques.optedOption1 += 1;
         else if (answer === ques.options[1]) ques.optedOption2 += 1;
         else if (answer === ques.options[2]) ques.optedOption3 += 1;
         else if (answer === ques.options[3]) ques.optedOption4 += 1;
       }
 
-      if(ques.optionType === "img"){
-        if (answer === ques.imageOptions[0]) ques.optedOption1 += 1; 
+      if (ques.optionType === "img") {
+        if (answer === ques.imageOptions[0]) ques.optedOption1 += 1;
         else if (answer === ques.imageOptions[1]) ques.optedOption2 += 1;
         else if (answer === ques.imageOptions[2]) ques.optedOption3 += 1;
         else if (answer === ques.imageOptions[3]) ques.optedOption4 += 1;
       }
 
-      if(ques.optionType === "both"){
-        if (answer === ques.options[0] + ques.imageOptions[0]) ques.optedOption1 += 1;
-        else if (answer === ques.options[1] + ques.imageOptions[1]) ques.optedOption2 += 1;
-        else if (answer === ques.options[2] + ques.imageOptions[2]) ques.optedOption3 += 1;
-        else if (answer === ques.options[3] + ques.imageOptions[3]) ques.optedOption4 += 1;
+      if (ques.optionType === "both") {
+        if (answer === ques.options[0] + ques.imageOptions[0])
+          ques.optedOption1 += 1;
+        else if (answer === ques.options[1] + ques.imageOptions[1])
+          ques.optedOption2 += 1;
+        else if (answer === ques.options[2] + ques.imageOptions[2])
+          ques.optedOption3 += 1;
+        else if (answer === ques.options[3] + ques.imageOptions[3])
+          ques.optedOption4 += 1;
       }
 
       ques.attempts = ques.attempts + 1;
@@ -441,12 +468,14 @@ const deleteQuiz = async (req, res) => {
   }
 };
 
-
 const getTrending = async (req, res) => {
   let success = false;
   let user = req.user;
   try {
-    let quizzes = await Quiz.find({user: user.id}, "impressions createdOn name").sort({ impressions: -1 });
+    let quizzes = await Quiz.find(
+      { user: user.id },
+      "impressions createdOn name"
+    ).sort({ impressions: -1 });
     quizzes = quizzes.filter((quiz, index) => quiz.impressions > 10);
     success = true;
     return res.json({ success, quizzes });
@@ -454,23 +483,30 @@ const getTrending = async (req, res) => {
     console.log(error);
     return res.json({ error: "Something Went Wrong!" });
   }
-}
+};
 
 const getQuestion = async (req, res) => {
-
   const { questionID } = req.params;
-  try{
-    const question = await Question.findOne({_id: questionID});
-    if(!question){
-      return res.json({error: "Question Not Found!"});
+  try {
+    const question = await Question.findOne({ _id: questionID });
+    if (!question) {
+      return res.json({ error: "Question Not Found!" });
     }
 
-    return res.json({success: true, question});
-  }
-  catch(error){
+    return res.json({ success: true, question });
+  } catch (error) {
     console.log(error);
-    return res.json({error: "Something Went Wrong!"});
+    return res.json({ error: "Something Went Wrong!" });
   }
-}
+};
 
-module.exports = { createQuiz, getQuiz, takeQuiz, deleteQuiz, takePoll, getTrending, getQuestion };
+module.exports = {
+  createQuiz,
+  getQuiz,
+  takeQuiz,
+  save_score,
+  deleteQuiz,
+  takePoll,
+  getTrending,
+  getQuestion,
+};

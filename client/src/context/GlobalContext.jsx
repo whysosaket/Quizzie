@@ -7,7 +7,13 @@ let url = import.meta.env.VITE_URL;
 
 const GlobalState = (props) => {
   const [progress, setProgress] = useState(0);
-  const [user, setUser] = useState({ name: "", email: "", quizCreated: 0, questionsCreated: 0, totalImpressions: 0});
+  const [user, setUser] = useState({
+    name: "",
+    email: "",
+    quizCreated: 0,
+    questionsCreated: 0,
+    totalImpressions: 0,
+  });
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [trending, setTrending] = useState([]);
 
@@ -44,7 +50,7 @@ const GlobalState = (props) => {
           email: data.data.email,
           quizCreated: data.data.quizCreated,
           questionsCreated: data.data.questionsCreated,
-          totalImpressions: data.data.totalImpressions
+          totalImpressions: data.data.totalImpressions,
         });
         localStorage.setItem("token", data.token);
         toastMessage(data.info, "success");
@@ -108,7 +114,7 @@ const GlobalState = (props) => {
           email: data.user.email,
           quizCreated: data.user.quizCreated,
           questionsCreated: data.user.questionsCreated,
-          totalImpressions: data.user.totalImpressions
+          totalImpressions: data.user.totalImpressions,
         });
         setIsAuthenticated(true);
         return true;
@@ -119,7 +125,7 @@ const GlobalState = (props) => {
       console.log(error);
       return false;
     }
-  }
+  };
 
   const getTrending = async () => {
     try {
@@ -141,7 +147,7 @@ const GlobalState = (props) => {
       console.log(error);
       return false;
     }
-  }
+  };
 
   const handleLogout = () => {
     console.log("logout");
@@ -153,7 +159,19 @@ const GlobalState = (props) => {
 
   return (
     <GlobalContext.Provider
-      value={{ login, signup,getInfo, progress,setProgress, user, handleLogout, isAuthenticated, toastMessage, getTrending, trending}}
+      value={{
+        login,
+        signup,
+        getInfo,
+        progress,
+        setProgress,
+        user,
+        handleLogout,
+        isAuthenticated,
+        toastMessage,
+        getTrending,
+        trending,
+      }}
     >
       {props.children}
     </GlobalContext.Provider>

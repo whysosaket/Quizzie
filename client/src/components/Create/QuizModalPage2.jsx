@@ -252,7 +252,7 @@ const QuizModalPage2 = (props) => {
         correctAnswer += optionImgRef[3].current.value;
       }
     }
-
+    console.log(timer + "lllllll");
     createQuestion(
       selectedQuestion,
       question,
@@ -511,7 +511,7 @@ const QuizModalPage2 = (props) => {
         correctAnswer += optionImgRef[3].current.value;
       }
     }
-
+    console.log(timer + " kjooo");
     createQuestion(
       selectedQuestion,
       question,
@@ -542,6 +542,7 @@ const QuizModalPage2 = (props) => {
   };
 
   const handleSelectTimer = (index) => {
+    //console.log(index);
     setSelectedTimer(index);
     setTimeout(() => {
       softSaveChanges();
@@ -592,11 +593,12 @@ const QuizModalPage2 = (props) => {
         </div>
       </div>
       <div className="question">
-        <input
+        <textarea
           onChange={handleSoftChange}
           ref={questionRef}
-          type="text"
           placeholder="Poll Question"
+          rows="4" // Optional, set to control initial height
+          cols="50" // Optional, set to control initial width
         />
       </div>
       <div className="questiontype">
@@ -717,10 +719,10 @@ const QuizModalPage2 = (props) => {
                 10 sec
               </div>
               <div
-                className={`timer ${selectedTimer === "50" && "selected"}`}
-                onClick={() => handleSelectTimer("50")}
+                className={`timer ${selectedTimer === "60" && "selected"}`}
+                onClick={() => handleSelectTimer("60")}
               >
-                50 sec
+                60 sec
               </div>
             </div>
           )}

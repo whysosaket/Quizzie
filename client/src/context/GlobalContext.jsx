@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
 const GlobalContext = createContext();
-let url = import.meta.env.VITE_URL;
+let url = "http://localhost:9000" || import.meta.env.VITE_URL;
 
 const GlobalState = (props) => {
   const [progress, setProgress] = useState(0);
@@ -72,6 +72,7 @@ const GlobalState = (props) => {
   const signup = async (name, email, password) => {
     setProgress(20);
     try {
+      console.log({ name, email, password });
       const response = await fetch(`${url}/api/auth/signup`, {
         method: "POST",
         headers: {
@@ -79,6 +80,7 @@ const GlobalState = (props) => {
         },
         body: JSON.stringify({ name, email, password }),
       });
+      console.log(response);
       setProgress(40);
       const data = await response.json();
       setProgress(60);

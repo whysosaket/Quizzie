@@ -6,10 +6,14 @@ body {
   width: 65%;
   background-color: white;
   border-radius: 12px;
-  height: 70vh;
+  height: auto; /* Let the container grow based on content height */
+  max-height: 70vh; /* Limit the maximum height to 70% of the viewport */
   margin: 5rem auto;
   padding: 2rem;
+  overflow-y: auto; /* Enables scrolling if content exceeds the container height */
+  box-sizing: border-box; /* Includes padding and borders in the element's total width and height */
 }
+
 
 .quizcompleted {
   height: 100%;

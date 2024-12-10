@@ -1,10 +1,12 @@
 import React, { useContext, useState, useEffect } from "react";
 import QuizContext from "../../context/QuizContext";
 import { useLocation } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const delimeter = "@1&2^";
 
 const Questions = (props) => {
+  let url = "http://localhost:9000" || import.meta.env.VITE_URL;
   const location = useLocation();
   const { getQuiz, takeQuiz, takePoll, takeQuizQuestions, takeQuizInfo } =
     useContext(QuizContext);
@@ -17,7 +19,7 @@ const Questions = (props) => {
   const [answers, setAnswers] = useState([]);
   const [timer, setTimer] = useState(0);
   const [selected, setSelected] = useState(-1);
-
+  const [questionTimers, setQuestionTimers] = useState([]);
   useEffect(() => {
     getQuiz(location.pathname.split("/")[2]);
   }, []);
@@ -54,13 +56,48 @@ const Questions = (props) => {
     return () => clearInterval(countdown);
   }, [isStarted, timer, questionNumber]);
 
-  const startQuiz = async () => {
-    if (!email || !regNo) {
-      alert(
-        "Please enter both email and registration number to start the quiz."
+  const checkIfAttempted = async (email, regNo) => {
+    try {
+      const response = await fetch(
+        `${url}/api/quiz/check_attempt?email=${encodeURIComponent(
+          email
+        )}&regNo=${encodeURIComponent(regNo)}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
       );
+
+      const result = await response.json();
+      //console.log(result);
+      return result.success;
+    } catch (error) {
+      console.error("Error in checkIfAttempted:", error);
+      throw error;
+    }
+  };
+
+  const startQuiz = async () => {
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
+    if (!email || !emailRegex.test(email)) {
+      toast("Please enter a valid Gmail address.");
       return;
     }
+    // const regNoRegex = /^\d{10}$/;
+    // if (!regNo || !regNoRegex.test(regNo)) {
+    //   toast("Please enter a valid 10-digit registration number.");
+    //   return;
+    // }
+
+    const hasAttempted = await checkIfAttempted(email, regNo);
+    console.log(hasAttempted);
+    if (hasAttempted) {
+      toast("You have already attempted the quiz.");
+      return;
+    }
+    setQuestionTimers(Array(takeQuizQuestions.length).fill(0));
     setTimer(takeQuizQuestions[0].timer);
     setIsStarted(true);
   };
@@ -72,7 +109,12 @@ const Questions = (props) => {
   const handleNext = () => {
     const newAnswers = [...answers];
     newAnswers.push(selected);
+
+    const newTimers = [...questionTimers];
+    newTimers[questionNumber] = takeQuizQuestions[questionNumber].timer - timer;
+
     setAnswers(newAnswers);
+    setQuestionTimers(newTimers);
     setSelected(-1);
     setQuestionNumber(questionNumber + 1);
     setTimer(takeQuizQuestions[questionNumber + 1].timer);
@@ -81,6 +123,10 @@ const Questions = (props) => {
   const handleFinish = async () => {
     let newAnswers = [...answers];
     newAnswers.push(selected);
+
+    const newTimers = [...questionTimers];
+    newTimers[questionNumber] = takeQuizQuestions[questionNumber].timer - timer;
+
     let finalAnswers = [];
     for (let i = 0; i < takeQuizInfo.questions.length; i++) {
       let ans = "";
@@ -103,6 +149,7 @@ const Questions = (props) => {
       regNo,
       quizID: takeQuizInfo.quizID,
       answers: finalAnswers,
+      questionTimers: newTimers,
     };
 
     if (takeQuizInfo.type === "poll") {
@@ -113,7 +160,6 @@ const Questions = (props) => {
     await takeQuiz(quizData);
     setIsFinished(true);
   };
-
   return (
     <>
       {isStarted ? (
@@ -126,16 +172,147 @@ const Questions = (props) => {
               takeQuizQuestions[questionNumber] &&
               takeQuizQuestions[questionNumber].timer > 0 && (
                 <h2 className="timer">
-                  00:{timer < 10 && 0}
-                  {timer}s
+                  00:{timer < 10 ? "0" : ""} {timer}s
                 </h2>
               )}
           </div>
+
           <h2 className="question">
-            {takeQuizQuestions[questionNumber] &&
-              takeQuizQuestions[questionNumber].question}
+            {takeQuizQuestions[questionNumber] && (
+              <pre>{takeQuizQuestions[questionNumber].question}</pre>
+            )}
           </h2>
-          {/* Render options */}
+
+          {takeQuizQuestions[questionNumber] &&
+            takeQuizQuestions[questionNumber].optionType === "text" && (
+              <div className="options">
+                <div
+                  onClick={() => handleSelected(0)}
+                  className={`option ${selected === 0 && "selected"}`}
+                >
+                  {takeQuizQuestions[questionNumber].options[0]}
+                </div>
+                <div
+                  onClick={() => handleSelected(1)}
+                  className={`option ${selected === 1 && "selected"}`}
+                >
+                  {takeQuizQuestions[questionNumber].options[1]}
+                </div>
+                {takeQuizQuestions[questionNumber].options[2] && (
+                  <div
+                    onClick={() => handleSelected(2)}
+                    className={`option ${selected === 2 && "selected"}`}
+                  >
+                    {takeQuizQuestions[questionNumber].options[2]}
+                  </div>
+                )}
+                {takeQuizQuestions[questionNumber].options[3] && (
+                  <div
+                    onClick={() => handleSelected(3)}
+                    className={`option ${selected === 3 && "selected"}`}
+                  >
+                    {takeQuizQuestions[questionNumber].options[3]}
+                  </div>
+                )}
+              </div>
+            )}
+
+          {takeQuizQuestions[questionNumber] &&
+            takeQuizQuestions[questionNumber].optionType === "img" && (
+              <div className="options">
+                <div
+                  onClick={() => handleSelected(0)}
+                  className={`option ${selected === 0 && "selected"}`}
+                >
+                  <img
+                    src={takeQuizQuestions[questionNumber].imageOptions[0]}
+                    alt="option1"
+                  />
+                </div>
+                <div
+                  onClick={() => handleSelected(1)}
+                  className={`option ${selected === 1 && "selected"}`}
+                >
+                  <img
+                    src={takeQuizQuestions[questionNumber].imageOptions[1]}
+                    alt="option2"
+                  />
+                </div>
+                {takeQuizQuestions[questionNumber].imageOptions[2] && (
+                  <div
+                    onClick={() => handleSelected(2)}
+                    className={`option ${selected === 2 && "selected"}`}
+                  >
+                    <img
+                      src={takeQuizQuestions[questionNumber].imageOptions[2]}
+                      alt="option3"
+                    />
+                  </div>
+                )}
+                {takeQuizQuestions[questionNumber].imageOptions[3] && (
+                  <div
+                    onClick={() => handleSelected(3)}
+                    className={`option ${selected === 3 && "selected"}`}
+                  >
+                    <img
+                      src={takeQuizQuestions[questionNumber].imageOptions[3]}
+                      alt="option4"
+                    />
+                  </div>
+                )}
+              </div>
+            )}
+
+          {takeQuizQuestions[questionNumber] &&
+            takeQuizQuestions[questionNumber].optionType === "both" && (
+              <div className="options">
+                <div
+                  onClick={() => handleSelected(0)}
+                  className={`option both ${selected === 0 && "selected"}`}
+                >
+                  {takeQuizQuestions[questionNumber].options[0]}
+                  <img
+                    src={takeQuizQuestions[questionNumber].imageOptions[0]}
+                    alt="option1"
+                  />
+                </div>
+                <div
+                  onClick={() => handleSelected(1)}
+                  className={`option both ${selected === 1 && "selected"}`}
+                >
+                  {takeQuizQuestions[questionNumber].options[1]}
+                  <img
+                    src={takeQuizQuestions[questionNumber].imageOptions[1]}
+                    alt="option2"
+                  />
+                </div>
+                {takeQuizQuestions[questionNumber].imageOptions[2] && (
+                  <div
+                    onClick={() => handleSelected(2)}
+                    className={`option both ${selected === 2 && "selected"}`}
+                  >
+                    {takeQuizQuestions[questionNumber].options[2]}
+                    <img
+                      src={takeQuizQuestions[questionNumber].imageOptions[2]}
+                      alt="option3"
+                    />
+                  </div>
+                )}
+                {takeQuizQuestions[questionNumber].imageOptions[3] && (
+                  <div
+                    onClick={() => handleSelected(3)}
+                    className={`option both ${selected === 3 && "selected"}`}
+                  >
+                    {takeQuizQuestions[questionNumber].options[3]}
+                    <img
+                      src={takeQuizQuestions[questionNumber].imageOptions[3]}
+                      alt="option4"
+                    />
+                  </div>
+                )}
+              </div>
+            )}
+
           <div className="submit">
             {questionNumber < takeQuizInfo.questions.length - 1 ? (
               <div onClick={handleNext} className="submitbtn">
@@ -151,7 +328,11 @@ const Questions = (props) => {
       ) : (
         <div className="questions startquiz">
           <h1
-            style={{ fontSize: "2rem", color: "#1a73e8", fontWeight: "bold" }}
+            style={{
+              fontSize: "2rem",
+              color: "#1a73e8",
+              fontWeight: "bold",
+            }}
           >
             {takeQuizInfo.name}
           </h1>
@@ -160,6 +341,8 @@ const Questions = (props) => {
             placeholder="Enter your email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            pattern="^[a-zA-Z0-9._%+-]+@gmail\.com$"
+            title="Please enter a valid Gmail address."
             style={{
               width: "100%",
               padding: "10px 15px",
@@ -169,12 +352,17 @@ const Questions = (props) => {
               boxSizing: "border-box",
               marginBottom: "10px",
             }}
+            required
           />
+
           <input
-            type="text"
+            type=""
             placeholder="Enter your registration number"
             value={regNo}
             onChange={(e) => setRegNo(e.target.value)}
+            maxLength={10}
+            pattern="^\d{10}$"
+            title="Registration number must be 10 digits"
             style={{
               width: "100%",
               padding: "10px 15px",
@@ -184,7 +372,9 @@ const Questions = (props) => {
               boxSizing: "border-box",
               marginBottom: "20px",
             }}
+            required
           />
+
           <button
             onClick={startQuiz}
             style={{

@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const quizResultSchema = new mongoose.Schema(
   {
     quizID: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: String,
       ref: "Quiz",
       required: true,
     },
@@ -21,6 +21,10 @@ const quizResultSchema = new mongoose.Schema(
     },
     total: {
       type: Number,
+      required: true,
+    },
+    questionTimers: {
+      type: [Number],
       required: true,
     },
   },

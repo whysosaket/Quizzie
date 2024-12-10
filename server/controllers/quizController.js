@@ -8,7 +8,7 @@ const QuizResult = require("../models/QuizResult");
 
 const convertToTitleCase = require("../utils/makeTitleCase");
 const generateQuizID = require("../utils/generateQuizID");
-const QuizResult = require("../models/QuizResult");
+const isValidEmail = require("../utils/isValidEmail");
 
 const delimeter = "@1&2^";
 
@@ -39,12 +39,12 @@ const createQuiz = async (req, res) => {
       });
     }
 
-    if (questions.length > 5) {
-      return res.json({
-        success,
-        error: "Quiz can have at most 5 questions!",
-      });
-    }
+    // if (questions.length > 5) {
+    //   return res.json({
+    //     success,
+    //     error: "Quiz can have at most 5 questions!",
+    //   });
+    // }
 
     if (name.length < 3) {
       return res.json({
@@ -100,11 +100,11 @@ const createQuiz = async (req, res) => {
         if (
           question.timer !== 5 &&
           question.timer !== 10 &&
-          question.timer !== 50
+          question.timer !== 60
         ) {
           return res.json({
             success,
-            error: `Question ${i + 1} Timer can only be 5, 10 or 0!`,
+            error: `Question ${i + 1} Timer can only be 5, 10 or 60!`,
           });
         }
       }
@@ -170,8 +170,6 @@ const createQuiz = async (req, res) => {
         }
       }
 
-      // Validating correct Answer
-
       if (optionType === "img" || optionType === "both") {
         if (type === "poll") {
           correctAnswer = "NA";
@@ -188,7 +186,6 @@ const createQuiz = async (req, res) => {
 
     let finalQuestions = [];
 
-    // Creating each Question
     for (let i = 0; i < questions.length; i++) {
       let question = questions[i];
       let {
@@ -242,6 +239,24 @@ const createQuiz = async (req, res) => {
   }
 };
 
+const check_attempt = async (req, res) => {
+  const { email, regNo } = req.query;
+  console.log(email);
+  try {
+    const attempt = await QuizResult.findOne({
+      $or: [{ email: email }, { regNo: regNo }],
+    });
+
+    if (attempt) {
+      return res.json({ success: true });
+    } else {
+      return res.json({ success: false });
+    }
+  } catch (error) {
+    console.error("Error checking quiz attempt:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
 const getQuiz = async (req, res) => {
   let success = false;
   let quizID = req.params.quizID;
@@ -250,7 +265,6 @@ const getQuiz = async (req, res) => {
     if (!quiz) {
       return res.json({ success, error: "Quiz Not Found!" });
     }
-    // update impressions
     quiz.impressions = quiz.impressions + 1;
     await quiz.save();
 
@@ -273,65 +287,81 @@ const getQuiz = async (req, res) => {
 const takeQuiz = async (req, res) => {
   let success = false;
   let quizID = req.params.quizID;
-  let { answers } = req.body;
+
+  if (!quizID) {
+    return res.json({ success, error: "Quiz ID is required!" });
+  }
+
+  console.log("Quiz ID:gddg", quizID);
+
+  let { answers, email, regNo } = req.body;
+
+  console.log(answers);
+
   try {
-    let quiz = await Quiz.findOne({ quizID: quizID });
+    let quiz = await Quiz.findOne({ quizID });
     if (!quiz) {
-      return res.json({ success, error: "Quiz Not Found!" });
+      return res.json({ success: false, error: "Quiz Not Found!" + quizID });
     }
 
     if (quiz.type !== "qna") {
-      return res.json({ success, error: "This is not a QnA Quiz!" });
+      return res.json({ success: false, error: "This is not a QnA Quiz!" });
     }
 
     let questions = quiz.questions;
+    if (!Array.isArray(questions) || questions.length === 0) {
+      return res.json({
+        success: false,
+        error: "No questions found in the quiz!",
+      });
+    }
+
     let score = 0;
     let total = questions.length;
     let attempted = 0;
     let correct = 0;
     let incorrect = 0;
 
-    for (let i = 0; i < questions.length; i++) {
+    for (let i = 0; i < total; i++) {
       let question = questions[i];
-      let answer = answers[i];
+      let answer = answers[i] || "";
+
       let ques = await Question.findOne({ _id: question });
       if (!ques) {
-        return res.json({ success, error: "Question Not Found!" });
+        return res.json({
+          success: false,
+          error: `Question ${i + 1} Not Found!`,
+        });
       }
+
       if (answer !== "") {
-        attempted = attempted + 1;
+        attempted++;
         if (answer === ques.correctAnswer) {
-          correct = correct + 1;
-          score = score + 1;
-          ques.correct = ques.correct + 1;
+          correct++;
+          score++;
+          ques.correct = (ques.correct || 0) + 1;
         } else {
-          incorrect = incorrect + 1;
-          ques.incorrect = ques.incorrect + 1;
+          incorrect++;
+          ques.incorrect = (ques.incorrect || 0) + 1;
         }
       }
-      ques.attempts = ques.attempts + 1;
+
+      ques.attempts = (ques.attempts || 0) + 1;
       await ques.save();
     }
 
-    let result = {
-      score,
-      total,
-      attempted,
-      correct,
-      incorrect,
-    };
-
+    let result = { score, total, attempted, correct, incorrect };
     success = true;
     return res.json({ success, result });
   } catch (error) {
-    console.log(error);
-    return res.json({ error: "Something Went Wrong!" });
+    console.error("Error in takeQuiz:", error);
+    return res.json({ success: false, error: "Something Went Wrong!" });
   }
 };
 
 const save_score = async (req, res) => {
-  const { quizID, email, regNo, score, total } = req.body;
-
+  const { quizID, email, regNo, score, total, questionTimers } = req.body;
+  console.log(req.body + "iengiueg");
   try {
     const existingResult = await QuizResult.findOne({ email, regNo });
     if (existingResult) {
@@ -341,9 +371,15 @@ const save_score = async (req, res) => {
     }
 
     // Save
-    const result = new QuizResult({ quizID, email, regNo, score, total });
+    const result = new QuizResult({
+      quizID,
+      email,
+      regNo,
+      score,
+      total,
+      questionTimers,
+    });
     await result.save();
-
     res.json({ success: true, message: "Score saved successfully!" });
   } catch (error) {
     console.error(error);
@@ -504,6 +540,7 @@ module.exports = {
   createQuiz,
   getQuiz,
   takeQuiz,
+  check_attempt,
   save_score,
   deleteQuiz,
   takePoll,

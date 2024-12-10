@@ -2,7 +2,7 @@ import { createContext, useState } from "react";
 import { toast } from "react-toastify";
 
 const QuizContext = createContext();
-let url = import.meta.env.VITE_URL;
+let url = "http://localhost:9000" || import.meta.env.VITE_URL;
 let clientUrl = import.meta.env.VITE_CLIENT;
 
 const QuizState = (props) => {
@@ -42,7 +42,7 @@ const QuizState = (props) => {
     timer,
     correctAnswer
   ) => {
-    console.log(quizInfo);
+    //console.log(timer + "oi");
     const newQuestion = {
       question,
       type,
@@ -79,6 +79,7 @@ const QuizState = (props) => {
     const { name, type } = quizInfo;
     const questionss = [...questions];
     const body = { name, type, questions: questionss };
+    console.log(body);
     try {
       const response = await fetch(`${url}/api/quiz/create`, {
         method: "POST",
@@ -168,10 +169,18 @@ const QuizState = (props) => {
     }
   };
 
-  const takeQuiz = async ({ quizID, answers, email, regNo }) => {
-    const body = { quizID, answers, email, regNo };
-
+  const takeQuiz = async ({
+    quizID,
+    answers,
+    email,
+    regNo,
+    questionTimers,
+  }) => {
+    const body = { answers, email, regNo };
+    const qid = quizID;
+    //console.log(answers);
     try {
+      //console.log(quizID);
       const response = await fetch(`${url}/api/quiz/${quizID}`, {
         method: "POST",
         headers: {
@@ -181,14 +190,21 @@ const QuizState = (props) => {
       });
 
       const data = await response.json();
-
+      //console.log(data.success);
       if (data.success) {
         const { score, total } = data.result;
         setResult({ score, total });
 
         //code changed here , sending score body
-        const scoreBody = { quizID, email, regNo, score, total };
-
+        const scoreBody = {
+          quizID,
+          email,
+          regNo,
+          score,
+          total,
+          questionTimers,
+        };
+        //console.log(scoreBody);
         const scoreResponse = await fetch(`${url}/api/quiz/save_score`, {
           method: "POST",
           headers: {
@@ -196,8 +212,8 @@ const QuizState = (props) => {
           },
           body: JSON.stringify(scoreBody),
         });
-
         const scoreData = await scoreResponse.json();
+        console.log(scoreData.success);
         if (scoreData.success) {
           console.log("Score saved successfully");
         } else {

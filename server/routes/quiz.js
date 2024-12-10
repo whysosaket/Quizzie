@@ -2,6 +2,7 @@ const {
   createQuiz,
   getQuiz,
   takeQuiz,
+  check_attempt,
   save_score,
   deleteQuiz,
   takePoll,
@@ -14,9 +15,13 @@ const quiz = (router) => {
   router
     .route("/api/quiz/create")
     .post(fetchuser, (req, res) => createQuiz(req, res));
+  router
+    .route("/api/quiz/check_attempt")
+    .get((req, res) => check_attempt(req, res));
+  router.route("/api/quiz/save_score").post((req, res) => save_score(req, res));
   router.route("/api/quiz/:quizID").get((req, res) => getQuiz(req, res));
   router.route("/api/quiz/:quizID").post((req, res) => takeQuiz(req, res));
-  router.route("/api/quiz/save_score").post((req, res) => save_score(req, res)); //socre save
+  //socre save
   router
     .route("/api/quiz/:quizID")
     .delete(fetchuser, (req, res) => deleteQuiz(req, res));

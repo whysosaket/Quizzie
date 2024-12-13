@@ -4,9 +4,11 @@ dotenv.config();
 const Quiz = require("../models/Quiz");
 const Question = require("../models/Question");
 const User = require("../models/User");
+const QuizResult = require("../models/QuizResult");
 
 const convertToTitleCase = require("../utils/makeTitleCase");
 const generateQuizID = require("../utils/generateQuizID");
+const isValidEmail = require("../utils/isValidEmail");
 
 const delimeter = "@1&2^";
 
@@ -37,12 +39,12 @@ const createQuiz = async (req, res) => {
       });
     }
 
-    if (questions.length > 5) {
-      return res.json({
-        success,
-        error: "Quiz can have at most 5 questions!",
-      });
-    }
+    // if (questions.length > 5) {
+    //   return res.json({
+    //     success,
+    //     error: "Quiz can have at most 5 questions!",
+    //   });
+    // }
 
     if (name.length < 3) {
       return res.json({
@@ -98,11 +100,11 @@ const createQuiz = async (req, res) => {
         if (
           question.timer !== 5 &&
           question.timer !== 10 &&
-          question.timer !== 0
+          question.timer !== 60
         ) {
           return res.json({
             success,
-            error: `Question ${i + 1} Timer can only be 5, 10 or 0!`,
+            error: `Question ${i + 1} Timer can only be 5, 10 or 60!`,
           });
         }
       }
@@ -154,7 +156,6 @@ const createQuiz = async (req, res) => {
         }
       }
 
-
       // Validating correct Answer
       if (optionType === "text" || optionType === "both") {
         if (type === "poll") {
@@ -168,8 +169,6 @@ const createQuiz = async (req, res) => {
           });
         }
       }
-
-      // Validating correct Answer
 
       if (optionType === "img" || optionType === "both") {
         if (type === "poll") {
@@ -187,7 +186,6 @@ const createQuiz = async (req, res) => {
 
     let finalQuestions = [];
 
-    // Creating each Question
     for (let i = 0; i < questions.length; i++) {
       let question = questions[i];
       let {
@@ -241,6 +239,34 @@ const createQuiz = async (req, res) => {
   }
 };
 
+const check_attempt = async (req, res) => {
+  const { email, regNo } = req.query;
+  //HASHMAP FOR EMAIL AND REGNO...
+  // if (!HashChangeEvent.contains(email) || HashChangeEvent.get(email) != regNo) {
+  //   return res.json({
+  //     success: true,
+  //     message: "You have not registered for this event with same credentials.",
+  //   });
+  // }
+  console.log(email);
+  try {
+    const attempt = await QuizResult.findOne({
+      $or: [{ email: email }, { regNo: regNo }],
+    });
+
+    if (attempt) {
+      return res.json({
+        success: true,
+        message: "You already attempted the quiz.",
+      });
+    } else {
+      return res.json({ success: false });
+    }
+  } catch (error) {
+    console.error("Error checking quiz attempt:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
 const getQuiz = async (req, res) => {
   let success = false;
   let quizID = req.params.quizID;
@@ -249,7 +275,6 @@ const getQuiz = async (req, res) => {
     if (!quiz) {
       return res.json({ success, error: "Quiz Not Found!" });
     }
-    // update impressions
     quiz.impressions = quiz.impressions + 1;
     await quiz.save();
 
@@ -272,59 +297,129 @@ const getQuiz = async (req, res) => {
 const takeQuiz = async (req, res) => {
   let success = false;
   let quizID = req.params.quizID;
-  let { answers } = req.body;
+
+  if (!quizID) {
+    return res.json({ success, error: "Quiz ID is required!" });
+  }
+
+  //console.log("Quiz ID:gddg", quizID);
+
+  let { answers, email, regNo, takeQuizQuestions } = req.body;
+
+  //console.log(takeQuizQuestions);
+
   try {
-    let quiz = await Quiz.findOne({ quizID: quizID });
+    let quiz = await Quiz.findOne({ quizID });
     if (!quiz) {
-      return res.json({ success, error: "Quiz Not Found!" });
+      return res.json({ success: false, error: "Quiz Not Found!" + quizID });
     }
 
     if (quiz.type !== "qna") {
-      return res.json({ success, error: "This is not a QnA Quiz!" });
+      return res.json({ success: false, error: "This is not a QnA Quiz!" });
     }
 
-    let questions = quiz.questions;
+    let questions = takeQuizQuestions;
+    if (!Array.isArray(questions) || questions.length === 0) {
+      return res.json({
+        success: false,
+        error: "No questions found in the quiz!",
+      });
+    }
+
     let score = 0;
     let total = questions.length;
     let attempted = 0;
     let correct = 0;
     let incorrect = 0;
-
-    for (let i = 0; i < questions.length; i++) {
+    const questionAnswerPairs = [];
+    for (let i = 0; i < total; i++) {
       let question = questions[i];
-      let answer = answers[i];
+      let answer = answers[i] || "";
+      //console.log(question);
       let ques = await Question.findOne({ _id: question });
       if (!ques) {
-        return res.json({ success, error: "Question Not Found!" });
+        return res.json({
+          success: false,
+          error: `Question ${i + 1} Not Found!`,
+        });
       }
+
       if (answer !== "") {
-        attempted = attempted + 1;
+        attempted++;
         if (answer === ques.correctAnswer) {
-          correct = correct + 1;
-          score = score + 1;
-          ques.correct = ques.correct + 1;
+          correct++;
+          score++;
+          ques.correct = (ques.correct || 0) + 1;
         } else {
-          incorrect = incorrect + 1;
-          ques.incorrect = ques.incorrect + 1;
+          incorrect++;
+          ques.incorrect = (ques.incorrect || 0) + 1;
         }
+      } else {
+        //console.log("MAI HE HU ULTIMATE ");
       }
-      ques.attempts = ques.attempts + 1;
+      questionAnswerPairs.push({ question, answer });
+      ques.attempts = (ques.attempts || 0) + 1;
       await ques.save();
     }
-
+    // console.log("START");
+    // console.log(questionAnswerPairs);
+    // console.log("END");
     let result = {
       score,
       total,
       attempted,
       correct,
       incorrect,
+      questionAnswerPairs,
     };
-
     success = true;
     return res.json({ success, result });
   } catch (error) {
-    console.log(error);
-    return res.json({ error: "Something Went Wrong!" });
+    console.error("Error in takeQuiz:", error);
+    return res.json({ success: false, error: "Something Went Wrong!" });
+  }
+};
+
+const save_score = async (req, res) => {
+  const {
+    quizID,
+    email,
+    regNo,
+    score,
+    total,
+    questionTimers,
+    questionAnswerPairs,
+  } = req.body;
+  //console.log(req.body + "iengiueg");
+  try {
+    const existingResult = await QuizResult.findOne({ email, regNo });
+    if (existingResult) {
+      return res
+        .status(400)
+        .json({ success: false, error: "You have already taken this quiz." });
+    }
+
+    const formattedQuestionAnswerPairs = questionAnswerPairs.map((pair) => ({
+      questionID: pair.question._id,
+      answer: pair.answer,
+    }));
+
+    //console.log(formattedQuestionAnswerPairs);
+    // Save
+    const result = new QuizResult({
+      quizID,
+      email,
+      regNo,
+      score,
+      total,
+      questionTimers,
+      formattedQuestionAnswerPairs,
+    });
+    await result.save();
+    res.json({ success: true, message: "Score saved successfully!" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, error: "Failed to save score." });
   }
 };
 
@@ -353,33 +448,37 @@ const takePoll = async (req, res) => {
         return res.json({ success, error: "Question Not Found!" });
       }
 
-      if(ques.optionType === "text"){
+      if (ques.optionType === "text") {
         answer = answer.split(delimeter)[0];
-      }else if(ques.optionType === "img"){
+      } else if (ques.optionType === "img") {
         answer = answer.split(delimeter)[1];
-      }else if(ques.optionType === "both"){
+      } else if (ques.optionType === "both") {
         answer = answer.split(delimeter)[0] + answer.split(delimeter)[1];
       }
 
-      if (ques.optionType === "text"){
+      if (ques.optionType === "text") {
         if (answer === ques.options[0]) ques.optedOption1 += 1;
         else if (answer === ques.options[1]) ques.optedOption2 += 1;
         else if (answer === ques.options[2]) ques.optedOption3 += 1;
         else if (answer === ques.options[3]) ques.optedOption4 += 1;
       }
 
-      if(ques.optionType === "img"){
-        if (answer === ques.imageOptions[0]) ques.optedOption1 += 1; 
+      if (ques.optionType === "img") {
+        if (answer === ques.imageOptions[0]) ques.optedOption1 += 1;
         else if (answer === ques.imageOptions[1]) ques.optedOption2 += 1;
         else if (answer === ques.imageOptions[2]) ques.optedOption3 += 1;
         else if (answer === ques.imageOptions[3]) ques.optedOption4 += 1;
       }
 
-      if(ques.optionType === "both"){
-        if (answer === ques.options[0] + ques.imageOptions[0]) ques.optedOption1 += 1;
-        else if (answer === ques.options[1] + ques.imageOptions[1]) ques.optedOption2 += 1;
-        else if (answer === ques.options[2] + ques.imageOptions[2]) ques.optedOption3 += 1;
-        else if (answer === ques.options[3] + ques.imageOptions[3]) ques.optedOption4 += 1;
+      if (ques.optionType === "both") {
+        if (answer === ques.options[0] + ques.imageOptions[0])
+          ques.optedOption1 += 1;
+        else if (answer === ques.options[1] + ques.imageOptions[1])
+          ques.optedOption2 += 1;
+        else if (answer === ques.options[2] + ques.imageOptions[2])
+          ques.optedOption3 += 1;
+        else if (answer === ques.options[3] + ques.imageOptions[3])
+          ques.optedOption4 += 1;
       }
 
       ques.attempts = ques.attempts + 1;
@@ -441,12 +540,14 @@ const deleteQuiz = async (req, res) => {
   }
 };
 
-
 const getTrending = async (req, res) => {
   let success = false;
   let user = req.user;
   try {
-    let quizzes = await Quiz.find({user: user.id}, "impressions createdOn name").sort({ impressions: -1 });
+    let quizzes = await Quiz.find(
+      { user: user.id },
+      "impressions createdOn name"
+    ).sort({ impressions: -1 });
     quizzes = quizzes.filter((quiz, index) => quiz.impressions > 10);
     success = true;
     return res.json({ success, quizzes });
@@ -454,23 +555,32 @@ const getTrending = async (req, res) => {
     console.log(error);
     return res.json({ error: "Something Went Wrong!" });
   }
-}
+};
 
 const getQuestion = async (req, res) => {
-
   const { questionID } = req.params;
-  try{
-    const question = await Question.findOne({_id: questionID});
-    if(!question){
-      return res.json({error: "Question Not Found!"});
+  //console.log(questionID);
+  try {
+    const question = await Question.findOne({ _id: questionID });
+    if (!question) {
+      return res.json({ error: "Question Not Found!xyz" });
     }
 
-    return res.json({success: true, question});
-  }
-  catch(error){
+    return res.json({ success: true, question });
+  } catch (error) {
     console.log(error);
-    return res.json({error: "Something Went Wrong!"});
+    return res.json({ error: "Something Went Wrong!" });
   }
-}
+};
 
-module.exports = { createQuiz, getQuiz, takeQuiz, deleteQuiz, takePoll, getTrending, getQuestion };
+module.exports = {
+  createQuiz,
+  getQuiz,
+  takeQuiz,
+  check_attempt,
+  save_score,
+  deleteQuiz,
+  takePoll,
+  getTrending,
+  getQuestion,
+};

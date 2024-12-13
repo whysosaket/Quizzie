@@ -7,8 +7,14 @@ import QuizContext from "../../context/QuizContext";
 const QuizModalPage2 = (props) => {
   const { setShowModal, setCurrentPage } = props;
   const { toastMessage } = useContext(GlobalContext);
-  const { cleanUp, createQuestion, quizInfo, questions, deleteQuestion, createQuiz } =
-    useContext(QuizContext);
+  const {
+    cleanUp,
+    createQuestion,
+    quizInfo,
+    questions,
+    deleteQuestion,
+    createQuiz,
+  } = useContext(QuizContext);
 
   const [questionType, setQuestionType] = useState("text");
   const [selectedOption, setSelectedOption] = useState(-1);
@@ -68,10 +74,10 @@ const QuizModalPage2 = (props) => {
     let ans = saveChanges();
     if (!ans) return;
 
-    if (questionNumber.length > 4) {
-      toastMessage("Max 5 questions allowed", "warning");
-      return;
-    }
+    // if (questionNumber.length > 4) {
+    //   toastMessage("Max 5 questions allowed", "warning");
+    //   return;
+    // }
 
     const newQuestionNumber = [...questionNumber];
     newQuestionNumber.push(questionNumber.length);
@@ -94,7 +100,7 @@ const QuizModalPage2 = (props) => {
       return;
     }
 
-    if (quizInfo.type ==="qna" && selectedOption === -1) {
+    if (quizInfo.type === "qna" && selectedOption === -1) {
       toastMessage("Please select an option", "warning");
       return;
     }
@@ -122,7 +128,7 @@ const QuizModalPage2 = (props) => {
         return;
       }
       option2 = optionRef[1].current.value;
-      if(option2 === option1){
+      if (option2 === option1) {
         toastMessage("Please enter different options", "warning");
         return;
       }
@@ -134,10 +140,10 @@ const QuizModalPage2 = (props) => {
         return;
       }
       option3 = optionRef[2].current.value;
-        if(option3 === option1 || option3 === option2){
-            toastMessage("Please enter different options", "warning");
-            return;
-        }
+      if (option3 === option1 || option3 === option2) {
+        toastMessage("Please enter different options", "warning");
+        return;
+      }
     }
 
     if (optionRef[3].current) {
@@ -146,10 +152,10 @@ const QuizModalPage2 = (props) => {
         return;
       }
       option4 = optionRef[3].current.value;
-        if(option4 === option1 || option4 === option2 || option4 === option3){
-            toastMessage("Please enter different options", "warning");
-            return;
-        }
+      if (option4 === option1 || option4 === option2 || option4 === option3) {
+        toastMessage("Please enter different options", "warning");
+        return;
+      }
     }
 
     if (optionImgRef[0].current) {
@@ -166,7 +172,7 @@ const QuizModalPage2 = (props) => {
         return;
       }
       option2img = optionImgRef[1].current.value;
-      if(option2img === option1img){
+      if (option2img === option1img) {
         toastMessage("Please enter different options", "warning");
         return;
       }
@@ -178,10 +184,10 @@ const QuizModalPage2 = (props) => {
         return;
       }
       option3img = optionImgRef[2].current.value;
-        if(option3img === option1img || option3img === option2img){
-            toastMessage("Please enter different options", "warning");
-            return;
-        }
+      if (option3img === option1img || option3img === option2img) {
+        toastMessage("Please enter different options", "warning");
+        return;
+      }
     }
 
     if (optionImgRef[3].current) {
@@ -190,10 +196,14 @@ const QuizModalPage2 = (props) => {
         return;
       }
       option4img = optionImgRef[3].current.value;
-        if(option4img === option1img || option4img === option2img || option4img === option3img){
-            toastMessage("Please enter different options", "warning");
-            return;
-        }
+      if (
+        option4img === option1img ||
+        option4img === option2img ||
+        option4img === option3img
+      ) {
+        toastMessage("Please enter different options", "warning");
+        return;
+      }
     }
 
     let optionType = questionType;
@@ -242,7 +252,7 @@ const QuizModalPage2 = (props) => {
         correctAnswer += optionImgRef[3].current.value;
       }
     }
-
+    console.log(timer + "lllllll");
     createQuestion(
       selectedQuestion,
       question,
@@ -392,152 +402,159 @@ const QuizModalPage2 = (props) => {
   };
 
   const handleCreateQuiz = async () => {
-
     let ans = saveChanges();
     if (!ans) return;
 
     if (questionNumber.length < 1) {
-        toastMessage("Please add at least one question", "warning");
-        return;
+      toastMessage("Please add at least one question", "warning");
+      return;
     }
 
     setTimeout(async () => {
       ans = await createQuiz();
-      if(ans){
-          setCurrentPage(2);
+      if (ans) {
+        setCurrentPage(2);
       }
     }, 200);
-}
+  };
 
-const softSaveChanges = () => {
-  const question = questionRef.current.value;
-  if (!question) {
-    return;
-  }
+  const softSaveChanges = () => {
+    const question = questionRef.current.value;
+    if (!question) {
+      return;
+    }
 
-  let option1, option2, option3, option4, option1img, option2img, option3img, option4img;
+    let option1,
+      option2,
+      option3,
+      option4,
+      option1img,
+      option2img,
+      option3img,
+      option4img;
 
-  if (optionRef[0].current) {
-    option1 = optionRef[0].current.value;
-  }
-
-  if (optionRef[1].current) {
-    option2 = optionRef[1].current.value;
-  }
-
-  if (optionRef[2].current) {
-    option3 = optionRef[2].current.value;
-  }
-
-  if (optionRef[3].current) {
-    option4 = optionRef[3].current.value;
-  }
-
-  if (optionImgRef[0].current) {
-    option1img = optionImgRef[0].current.value;
-  }
-
-  if (optionImgRef[1].current) {
-    option2img = optionImgRef[1].current.value;
-  }
-
-  if (optionImgRef[2].current) {
-    option3img = optionImgRef[2].current.value;
-  }
-
-  if (optionImgRef[3].current) {
-    option4img = optionImgRef[3].current.value;
-  }
-
-  let optionType = questionType;
-  if (questionType === "text") optionType = "text";
-  else if (questionType === "imageUrl") optionType = "img";
-  else if (questionType === "textAndImageUrl") optionType = "both";
-  const timer = selectedTimer;
-
-  let correctAnswer = "";
-  if (selectedOption === 0) {
     if (optionRef[0].current) {
-      correctAnswer += optionRef[0].current.value;
+      option1 = optionRef[0].current.value;
     }
-    correctAnswer += "@1&2^";
-    if (optionImgRef[0].current) {
-      correctAnswer += optionImgRef[0].current.value;
-    }
-  }
 
-  if (selectedOption === 1) {
     if (optionRef[1].current) {
-      correctAnswer += optionRef[1].current.value;
+      option2 = optionRef[1].current.value;
     }
-    correctAnswer += "@1&2^";
-    if (optionImgRef[1].current) {
-      correctAnswer += optionImgRef[1].current.value;
-    }
-  }
 
-  if (selectedOption === 2) {
     if (optionRef[2].current) {
-      correctAnswer += optionRef[2].current.value;
+      option3 = optionRef[2].current.value;
     }
-    correctAnswer += "@1&2^";
-    if (optionImgRef[2].current) {
-      correctAnswer += optionImgRef[2].current.value;
-    }
-  }
 
-  if (selectedOption === 3) {
     if (optionRef[3].current) {
-      correctAnswer += optionRef[3].current.value;
+      option4 = optionRef[3].current.value;
     }
-    correctAnswer += "@1&2^";
+
+    if (optionImgRef[0].current) {
+      option1img = optionImgRef[0].current.value;
+    }
+
+    if (optionImgRef[1].current) {
+      option2img = optionImgRef[1].current.value;
+    }
+
+    if (optionImgRef[2].current) {
+      option3img = optionImgRef[2].current.value;
+    }
+
     if (optionImgRef[3].current) {
-      correctAnswer += optionImgRef[3].current.value;
+      option4img = optionImgRef[3].current.value;
     }
-  }
 
-  createQuestion(
-    selectedQuestion,
-    question,
-    questionType,
-    optionType,
-    option1,
-    option2,
-    option3,
-    option4,
-    option1img,
-    option2img,
-    option3img,
-    option4img,
-    timer,
-    correctAnswer
-  );
-};
+    let optionType = questionType;
+    if (questionType === "text") optionType = "text";
+    else if (questionType === "imageUrl") optionType = "img";
+    else if (questionType === "textAndImageUrl") optionType = "both";
+    const timer = selectedTimer;
 
-const handleSoftChange = () => {
-  softSaveChanges();
-};
+    let correctAnswer = "";
+    if (selectedOption === 0) {
+      if (optionRef[0].current) {
+        correctAnswer += optionRef[0].current.value;
+      }
+      correctAnswer += "@1&2^";
+      if (optionImgRef[0].current) {
+        correctAnswer += optionImgRef[0].current.value;
+      }
+    }
 
-const handleSelectOption = (index) => {
-  setSelectedOption(index);
-  setTimeout(() => {
+    if (selectedOption === 1) {
+      if (optionRef[1].current) {
+        correctAnswer += optionRef[1].current.value;
+      }
+      correctAnswer += "@1&2^";
+      if (optionImgRef[1].current) {
+        correctAnswer += optionImgRef[1].current.value;
+      }
+    }
+
+    if (selectedOption === 2) {
+      if (optionRef[2].current) {
+        correctAnswer += optionRef[2].current.value;
+      }
+      correctAnswer += "@1&2^";
+      if (optionImgRef[2].current) {
+        correctAnswer += optionImgRef[2].current.value;
+      }
+    }
+
+    if (selectedOption === 3) {
+      if (optionRef[3].current) {
+        correctAnswer += optionRef[3].current.value;
+      }
+      correctAnswer += "@1&2^";
+      if (optionImgRef[3].current) {
+        correctAnswer += optionImgRef[3].current.value;
+      }
+    }
+    console.log(timer + " kjooo");
+    createQuestion(
+      selectedQuestion,
+      question,
+      questionType,
+      optionType,
+      option1,
+      option2,
+      option3,
+      option4,
+      option1img,
+      option2img,
+      option3img,
+      option4img,
+      timer,
+      correctAnswer
+    );
+  };
+
+  const handleSoftChange = () => {
     softSaveChanges();
-  }, 100);
-}
+  };
 
-const handleSelectTimer = (index) => {
-  setSelectedTimer(index);
-  setTimeout(() => {
-    softSaveChanges();
-  }, 100);
-}
+  const handleSelectOption = (index) => {
+    setSelectedOption(index);
+    setTimeout(() => {
+      softSaveChanges();
+    }, 100);
+  };
 
-const handleSelectOptionType = (index) => {
-  setQuestionType(index);
-  setTimeout(() => {
-    softSaveChanges();
-  }, 100);
-}
+  const handleSelectTimer = (index) => {
+    //console.log(index);
+    setSelectedTimer(index);
+    setTimeout(() => {
+      softSaveChanges();
+    }, 100);
+  };
+
+  const handleSelectOptionType = (index) => {
+    setQuestionType(index);
+    setTimeout(() => {
+      softSaveChanges();
+    }, 100);
+  };
 
   return (
     <div className="page page2">
@@ -553,7 +570,7 @@ const handleSelectOptionType = (index) => {
                 }`}
               >
                 <h6>{index + 1}</h6>
-                {index === questionNumber.length-1 && index > 0 && (
+                {index === questionNumber.length - 1 && index > 0 && (
                   <p
                     onClick={() => handleDeleteQuestion(index)}
                     className="cross"
@@ -564,7 +581,7 @@ const handleSelectOptionType = (index) => {
               </div>
             );
           })}
-          {questionNumber.length < 5 && (
+          {questionNumber.length < 500 && (
             <div onClick={handleAddQuestion} className="questionselector">
               <FiPlus />
             </div>
@@ -572,11 +589,17 @@ const handleSelectOptionType = (index) => {
           {/* <IoSave onClick={saveChanges} className="questionselector saveicon" /> */}
         </div>
         <div>
-          <h6>Max 5 questions</h6>
+          <h6>Max 500 questions</h6>
         </div>
       </div>
       <div className="question">
-        <input onChange={handleSoftChange} ref={questionRef} type="text" placeholder="Poll Question" />
+        <textarea
+          onChange={handleSoftChange}
+          ref={questionRef}
+          placeholder="Poll Question"
+          rows="4" // Optional, set to control initial height
+          cols="50" // Optional, set to control initial width
+        />
       </div>
       <div className="questiontype">
         <p>Question Type</p>
@@ -622,15 +645,16 @@ const handleSelectOptionType = (index) => {
             return (
               <div className="optionnnn">
                 <label key={index}>
-                  { quizInfo.type!=="poll"&&
-                  <input
-                    type="radio"
-                    name="option"
-                    className="btnopt"
-                    value={option}
-                    checked={selectedOption === index}
-                    onChange={() => handleSelectOption(index)}
-                  />}
+                  {quizInfo.type !== "poll" && (
+                    <input
+                      type="radio"
+                      name="option"
+                      className="btnopt"
+                      value={option}
+                      checked={selectedOption === index}
+                      onChange={() => handleSelectOption(index)}
+                    />
+                  )}
                   {(questionType === "text" ||
                     questionType === "textAndImageUrl") && (
                     <input
@@ -650,13 +674,15 @@ const handleSelectOptionType = (index) => {
                       } imageoption`}
                       type="text"
                       placeholder="Image URL"
-                      onChange={handleSoftChange }
+                      onChange={handleSoftChange}
                     />
                   )}
                 </label>
                 {index > 1 && (
                   <RiDeleteBin6Fill
-                    onClick={() => {handleDeleteOption(index);}}
+                    onClick={() => {
+                      handleDeleteOption(index);
+                    }}
                     className="deleteicon"
                   />
                 )}
@@ -671,34 +697,44 @@ const handleSelectOptionType = (index) => {
           )}
         </div>
         <div className="bottomright">
-          {quizInfo.type!=="poll"&&<div className="timeroptions">
-            <h6>Timer</h6>
-            <div
-              className={`timer ${selectedTimer === "0" && "selected"}`}
-              onClick={() => handleSelectTimer("0")}
-            >
-              OFF
+          {quizInfo.type !== "poll" && (
+            <div className="timeroptions">
+              <h6>Timer</h6>
+              <div
+                className={`timer ${selectedTimer === "0" && "selected"}`}
+                onClick={() => handleSelectTimer("0")}
+              >
+                OFF
+              </div>
+              <div
+                className={`timer ${selectedTimer === "5" && "selected"}`}
+                onClick={() => handleSelectTimer("5")}
+              >
+                5 sec
+              </div>
+              <div
+                className={`timer ${selectedTimer === "10" && "selected"}`}
+                onClick={() => handleSelectTimer("10")}
+              >
+                10 sec
+              </div>
+              <div
+                className={`timer ${selectedTimer === "60" && "selected"}`}
+                onClick={() => handleSelectTimer("60")}
+              >
+                60 sec
+              </div>
             </div>
-            <div
-              className={`timer ${selectedTimer === "5" && "selected"}`}
-              onClick={() => handleSelectTimer("5")}
-            >
-              5 sec
-            </div>
-            <div
-              className={`timer ${selectedTimer === "10" && "selected"}`}
-              onClick={() => handleSelectTimer("10")}
-            >
-              10 sec
-            </div>
-          </div>}
+          )}
         </div>
       </div>
       <div className="cancelconfirm">
         <button onClick={handleCleanup} className="cancelbtn">
           Cancel
         </button>
-        <button onClick={handleCreateQuiz} className="confirmbtn">Create Quiz</button>
+        <button onClick={handleCreateQuiz} className="confirmbtn">
+          Create Quiz
+        </button>
       </div>
     </div>
   );

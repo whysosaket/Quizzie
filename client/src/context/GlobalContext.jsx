@@ -3,11 +3,17 @@ import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
 const GlobalContext = createContext();
-let url = import.meta.env.VITE_URL;
+let url = import.meta.env.VITE_URL || "http://localhost:9000";
 
 const GlobalState = (props) => {
   const [progress, setProgress] = useState(0);
-  const [user, setUser] = useState({ name: "", email: "", quizCreated: 0, questionsCreated: 0, totalImpressions: 0});
+  const [user, setUser] = useState({
+    name: "",
+    email: "",
+    quizCreated: 0,
+    questionsCreated: 0,
+    totalImpressions: 0,
+  });
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [trending, setTrending] = useState([]);
 
@@ -44,7 +50,7 @@ const GlobalState = (props) => {
           email: data.data.email,
           quizCreated: data.data.quizCreated,
           questionsCreated: data.data.questionsCreated,
-          totalImpressions: data.data.totalImpressions
+          totalImpressions: data.data.totalImpressions,
         });
         localStorage.setItem("token", data.token);
         toastMessage(data.info, "success");
@@ -66,6 +72,7 @@ const GlobalState = (props) => {
   const signup = async (name, email, password) => {
     setProgress(20);
     try {
+      console.log({ name, email, password });
       const response = await fetch(`${url}/api/auth/signup`, {
         method: "POST",
         headers: {
@@ -73,6 +80,7 @@ const GlobalState = (props) => {
         },
         body: JSON.stringify({ name, email, password }),
       });
+      console.log(response);
       setProgress(40);
       const data = await response.json();
       setProgress(60);
@@ -108,7 +116,7 @@ const GlobalState = (props) => {
           email: data.user.email,
           quizCreated: data.user.quizCreated,
           questionsCreated: data.user.questionsCreated,
-          totalImpressions: data.user.totalImpressions
+          totalImpressions: data.user.totalImpressions,
         });
         setIsAuthenticated(true);
         return true;
@@ -119,7 +127,7 @@ const GlobalState = (props) => {
       console.log(error);
       return false;
     }
-  }
+  };
 
   const getTrending = async () => {
     try {
@@ -141,7 +149,7 @@ const GlobalState = (props) => {
       console.log(error);
       return false;
     }
-  }
+  };
 
   const handleLogout = () => {
     console.log("logout");
@@ -153,7 +161,19 @@ const GlobalState = (props) => {
 
   return (
     <GlobalContext.Provider
-      value={{ login, signup,getInfo, progress,setProgress, user, handleLogout, isAuthenticated, toastMessage, getTrending, trending}}
+      value={{
+        login,
+        signup,
+        getInfo,
+        progress,
+        setProgress,
+        user,
+        handleLogout,
+        isAuthenticated,
+        toastMessage,
+        getTrending,
+        trending,
+      }}
     >
       {props.children}
     </GlobalContext.Provider>

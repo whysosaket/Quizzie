@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
 const GlobalContext = createContext();
-let url = "http://localhost:9000" || import.meta.env.VITE_URL;
+let url = import.meta.env.VITE_URL || "http://localhost:9000";
 
 const GlobalState = (props) => {
   const [progress, setProgress] = useState(0);

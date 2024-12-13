@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 const delimeter = "@1&2^";
 
 const Questions = (props) => {
-  let url = "http://localhost:9000" || import.meta.env.VITE_URL;
+  let url = import.meta.env.VITE_URL || "http://localhost:9000";
   const location = useLocation();
   const { getQuiz, takeQuiz, takePoll, takeQuizQuestions, takeQuizInfo } =
     useContext(QuizContext);
@@ -41,14 +41,14 @@ const Questions = (props) => {
     } else if (
       isStarted &&
       timer === -1 &&
-      questionNumber < takeQuizInfo.questions.length - 1
+      questionNumber < takeQuizInfo.quesRandom.length - 1
     ) {
       setTimer(takeQuizQuestions[questionNumber + 1].timer);
       handleNext();
     } else if (
       isStarted &&
       timer === -1 &&
-      questionNumber === takeQuizInfo.questions.length - 1
+      questionNumber === takeQuizInfo.quesRandom.length - 1
     ) {
       handleFinish();
     }
@@ -57,6 +57,9 @@ const Questions = (props) => {
   }, [isStarted, timer, questionNumber]);
 
   const checkIfAttempted = async (email, regNo) => {
+    // console.log(takeQuizInfo);
+    // console.log("SEPERSTOR");
+    // console.log(takeQuizQuestions);
     try {
       const response = await fetch(
         `${url}/api/quiz/check_attempt?email=${encodeURIComponent(
@@ -72,7 +75,7 @@ const Questions = (props) => {
 
       const result = await response.json();
       //console.log(result);
-      return result.success;
+      return { success: result.success, message: result.message };
     } catch (error) {
       console.error("Error in checkIfAttempted:", error);
       throw error;
@@ -91,10 +94,10 @@ const Questions = (props) => {
     //   return;
     // }
 
-    const hasAttempted = await checkIfAttempted(email, regNo);
-    console.log(hasAttempted);
-    if (hasAttempted) {
-      toast("You have already attempted the quiz.");
+    const { success, message } = await checkIfAttempted(email, regNo);
+
+    if (success) {
+      toast(message);
       return;
     }
     setQuestionTimers(Array(takeQuizQuestions.length).fill(0));
@@ -128,7 +131,7 @@ const Questions = (props) => {
     newTimers[questionNumber] = takeQuizQuestions[questionNumber].timer - timer;
 
     let finalAnswers = [];
-    for (let i = 0; i < takeQuizInfo.questions.length; i++) {
+    for (let i = 0; i < takeQuizInfo.quesRandom.length; i++) {
       let ans = "";
       if (takeQuizQuestions[i].optionType === "text") {
         ans += takeQuizQuestions[i].options[newAnswers[i]];
@@ -166,7 +169,7 @@ const Questions = (props) => {
         <div className="questions">
           <div className="qtopbar">
             <h2 className="questionno">
-              0{questionNumber + 1}/0{takeQuizInfo.questions.length}
+              0{questionNumber + 1}/0{takeQuizInfo.quesRandom.length}
             </h2>
             {takeQuizInfo.type === "qna" &&
               takeQuizQuestions[questionNumber] &&
@@ -314,7 +317,7 @@ const Questions = (props) => {
             )}
 
           <div className="submit">
-            {questionNumber < takeQuizInfo.questions.length - 1 ? (
+            {questionNumber < takeQuizInfo.quesRandom.length - 1 ? (
               <div onClick={handleNext} className="submitbtn">
                 Next
               </div>

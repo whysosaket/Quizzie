@@ -2,7 +2,7 @@ import { createContext, useState } from "react";
 import { toast } from "react-toastify";
 
 const QuizContext = createContext();
-let url = "http://localhost:9000" || import.meta.env.VITE_URL;
+let url = import.meta.env.VITE_URL || "http://localhost:9000";
 let clientUrl = import.meta.env.VITE_CLIENT;
 
 const QuizState = (props) => {
@@ -90,7 +90,7 @@ const QuizState = (props) => {
         body: JSON.stringify(body),
       });
       const data = await response.json();
-      console.log(data);
+      //console.log(data);
       if (data.success) {
         toastMessage(data.info, "success");
         setShareLink(`${clientUrl}/quiz/${data.quizID}`);
@@ -130,12 +130,29 @@ const QuizState = (props) => {
       const data = await response.json();
       if (data.success) {
         const { name, type, question, questions, quizID } = data.quiz;
-        setTakeQuizInfo({ name, type, question, questions, quizID });
+        //console.log(question + " Question ");
+        let quesRandom = [];
+        var random = 15;
+        //console.log("Question length " + questions);
+        // if that question not already included from questions then include it
+        while (quesRandom.length < random) {
+          const randomIndex = Math.floor(Math.random() * questions.length);
+          const selectedQuestion = questions[randomIndex];
+          if (!quesRandom.includes(selectedQuestion)) {
+            quesRandom.push(selectedQuestion);
+          }
+        }
+        //console.log(quesRandom);
+        setTakeQuizInfo({ name, type, question, quesRandom, quizID });
         let newQuestions = [];
-        for (let i = 0; i < questions.length; i++) {
-          let ques = await getQuestion(questions[i]);
+        for (let i = 0; i < quesRandom.length; i++) {
+          const questionID = quesRandom[i];
+          //console.log(`Requesting question ID: ${questionID}`);
+          let ques = await getQuestion(questionID);
           newQuestions.push(ques);
         }
+
+        //console.log(newQuestions);
         setTakeQuizQuestions(newQuestions);
         return true;
       } else {
@@ -157,9 +174,12 @@ const QuizState = (props) => {
         },
       });
       const data = await response.json();
+      //console.log("DATA");
+      //console.log(data);
       if (data.success) {
         return data.question;
       } else {
+        console.log("QUES ID", questionID);
         toastMessage(data.error, "warning");
         return false;
       }
@@ -176,7 +196,7 @@ const QuizState = (props) => {
     regNo,
     questionTimers,
   }) => {
-    const body = { answers, email, regNo };
+    const body = { answers, email, regNo, takeQuizQuestions };
     const qid = quizID;
     //console.log(answers);
     try {
@@ -194,8 +214,11 @@ const QuizState = (props) => {
       if (data.success) {
         const { score, total } = data.result;
         setResult({ score, total });
+        //console.log("Data:", data);
 
-        //code changed here , sending score body
+        const questionAnswerPairs = data.result.questionAnswerPairs;
+        //console.log("Question Answer Pairs:", questionAnswerPairs);
+
         const scoreBody = {
           quizID,
           email,
@@ -203,8 +226,11 @@ const QuizState = (props) => {
           score,
           total,
           questionTimers,
+          questionAnswerPairs,
         };
-        //console.log(scoreBody);
+        console.log("START");
+        console.log(questionAnswerPairs);
+        console.log("END");
         const scoreResponse = await fetch(`${url}/api/quiz/save_score`, {
           method: "POST",
           headers: {

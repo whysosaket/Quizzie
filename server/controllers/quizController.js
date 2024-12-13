@@ -241,6 +241,13 @@ const createQuiz = async (req, res) => {
 
 const check_attempt = async (req, res) => {
   const { email, regNo } = req.query;
+  //HASHMAP FOR EMAIL AND REGNO...
+  // if (!HashChangeEvent.contains(email) || HashChangeEvent.get(email) != regNo) {
+  //   return res.json({
+  //     success: true,
+  //     message: "You have not registered for this event with same credentials.",
+  //   });
+  // }
   console.log(email);
   try {
     const attempt = await QuizResult.findOne({
@@ -248,7 +255,10 @@ const check_attempt = async (req, res) => {
     });
 
     if (attempt) {
-      return res.json({ success: true });
+      return res.json({
+        success: true,
+        message: "You already attempted the quiz.",
+      });
     } else {
       return res.json({ success: false });
     }
@@ -292,11 +302,11 @@ const takeQuiz = async (req, res) => {
     return res.json({ success, error: "Quiz ID is required!" });
   }
 
-  console.log("Quiz ID:gddg", quizID);
+  //console.log("Quiz ID:gddg", quizID);
 
-  let { answers, email, regNo } = req.body;
+  let { answers, email, regNo, takeQuizQuestions } = req.body;
 
-  console.log(answers);
+  //console.log(takeQuizQuestions);
 
   try {
     let quiz = await Quiz.findOne({ quizID });
@@ -308,7 +318,7 @@ const takeQuiz = async (req, res) => {
       return res.json({ success: false, error: "This is not a QnA Quiz!" });
     }
 
-    let questions = quiz.questions;
+    let questions = takeQuizQuestions;
     if (!Array.isArray(questions) || questions.length === 0) {
       return res.json({
         success: false,
@@ -321,11 +331,11 @@ const takeQuiz = async (req, res) => {
     let attempted = 0;
     let correct = 0;
     let incorrect = 0;
-
+    const questionAnswerPairs = [];
     for (let i = 0; i < total; i++) {
       let question = questions[i];
       let answer = answers[i] || "";
-
+      //console.log(question);
       let ques = await Question.findOne({ _id: question });
       if (!ques) {
         return res.json({
@@ -344,13 +354,24 @@ const takeQuiz = async (req, res) => {
           incorrect++;
           ques.incorrect = (ques.incorrect || 0) + 1;
         }
+      } else {
+        //console.log("MAI HE HU ULTIMATE ");
       }
-
+      questionAnswerPairs.push({ question, answer });
       ques.attempts = (ques.attempts || 0) + 1;
       await ques.save();
     }
-
-    let result = { score, total, attempted, correct, incorrect };
+    // console.log("START");
+    // console.log(questionAnswerPairs);
+    // console.log("END");
+    let result = {
+      score,
+      total,
+      attempted,
+      correct,
+      incorrect,
+      questionAnswerPairs,
+    };
     success = true;
     return res.json({ success, result });
   } catch (error) {
@@ -360,8 +381,16 @@ const takeQuiz = async (req, res) => {
 };
 
 const save_score = async (req, res) => {
-  const { quizID, email, regNo, score, total, questionTimers } = req.body;
-  console.log(req.body + "iengiueg");
+  const {
+    quizID,
+    email,
+    regNo,
+    score,
+    total,
+    questionTimers,
+    questionAnswerPairs,
+  } = req.body;
+  //console.log(req.body + "iengiueg");
   try {
     const existingResult = await QuizResult.findOne({ email, regNo });
     if (existingResult) {
@@ -370,6 +399,12 @@ const save_score = async (req, res) => {
         .json({ success: false, error: "You have already taken this quiz." });
     }
 
+    const formattedQuestionAnswerPairs = questionAnswerPairs.map((pair) => ({
+      questionID: pair.question._id,
+      answer: pair.answer,
+    }));
+
+    //console.log(formattedQuestionAnswerPairs);
     // Save
     const result = new QuizResult({
       quizID,
@@ -378,6 +413,7 @@ const save_score = async (req, res) => {
       score,
       total,
       questionTimers,
+      formattedQuestionAnswerPairs,
     });
     await result.save();
     res.json({ success: true, message: "Score saved successfully!" });
@@ -523,10 +559,11 @@ const getTrending = async (req, res) => {
 
 const getQuestion = async (req, res) => {
   const { questionID } = req.params;
+  //console.log(questionID);
   try {
     const question = await Question.findOne({ _id: questionID });
     if (!question) {
-      return res.json({ error: "Question Not Found!" });
+      return res.json({ error: "Question Not Found!xyz" });
     }
 
     return res.json({ success: true, question });

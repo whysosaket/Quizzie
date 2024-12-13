@@ -27,6 +27,15 @@ const quizResultSchema = new mongoose.Schema(
       type: [Number],
       required: true,
     },
+    formattedQuestionAnswerPairs: [
+      {
+        questionID: {
+          type: String,
+          required: true,
+        },
+        answer: { type: String, required: true },
+      },
+    ],
   },
   { timestamps: true }
 );

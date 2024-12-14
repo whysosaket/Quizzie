@@ -79,7 +79,7 @@ const QuizState = (props) => {
     const { name, type } = quizInfo;
     const questionss = [...questions];
     const body = { name, type, questions: questionss };
-    console.log(body);
+    //console.log(body);
     try {
       const response = await fetch(`${url}/api/quiz/create`, {
         method: "POST",
@@ -130,14 +130,50 @@ const QuizState = (props) => {
       const data = await response.json();
       if (data.success) {
         const { name, type, question, questions, quizID } = data.quiz;
-        //console.log(question + " Question ");
+        //console.log(questions);
         let quesRandom = [];
-        var random = 15;
+        var random = 5;
+        let easyQues = [];
+        let medQues = [];
+        let hardQues = [];
+        for (let i = 0; i < questions.length; i++) {
+          const questionID = questions[i];
+          let ques = await getQuestion(questionID);
+          if (ques.timer == 30) easyQues.push(questionID);
+          //console.log(ques.timer);
+        }
+        for (let i = 0; i < questions.length; i++) {
+          const questionID = questions[i];
+          let ques = await getQuestion(questionID);
+          if (ques.timer == 60) medQues.push(questionID);
+          //console.log(ques.timer);
+        }
+        //console.log(medQues);
+        for (let i = 0; i < questions.length; i++) {
+          const questionID = questions[i];
+          let ques = await getQuestion(questionID);
+          if (ques.timer == 90) hardQues.push(questionID);
+          //console.log(ques.timer);
+        }
         //console.log("Question length " + questions);
         // if that question not already included from questions then include it
         while (quesRandom.length < random) {
-          const randomIndex = Math.floor(Math.random() * questions.length);
-          const selectedQuestion = questions[randomIndex];
+          const randomIndex = Math.floor(Math.random() * easyQues.length);
+          const selectedQuestion = easyQues[randomIndex];
+          if (!quesRandom.includes(selectedQuestion)) {
+            quesRandom.push(selectedQuestion);
+          }
+        }
+        while (quesRandom.length < random + 5) {
+          const randomIndex = Math.floor(Math.random() * medQues.length);
+          const selectedQuestion = medQues[randomIndex];
+          if (!quesRandom.includes(selectedQuestion)) {
+            quesRandom.push(selectedQuestion);
+          }
+        }
+        while (quesRandom.length < random + 10) {
+          const randomIndex = Math.floor(Math.random() * hardQues.length);
+          const selectedQuestion = hardQues[randomIndex];
           if (!quesRandom.includes(selectedQuestion)) {
             quesRandom.push(selectedQuestion);
           }
@@ -228,9 +264,9 @@ const QuizState = (props) => {
           questionTimers,
           questionAnswerPairs,
         };
-        console.log("START");
-        console.log(questionAnswerPairs);
-        console.log("END");
+        //console.log("START");
+        //console.log(questionAnswerPairs);
+        //console.log("END");
         const scoreResponse = await fetch(`${url}/api/quiz/save_score`, {
           method: "POST",
           headers: {

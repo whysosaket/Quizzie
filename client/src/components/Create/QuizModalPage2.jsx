@@ -252,7 +252,7 @@ const QuizModalPage2 = (props) => {
         correctAnswer += optionImgRef[3].current.value;
       }
     }
-    console.log(timer + "lllllll");
+    //console.log(timer + "lllllll");
     createQuestion(
       selectedQuestion,
       question,
@@ -511,7 +511,7 @@ const QuizModalPage2 = (props) => {
         correctAnswer += optionImgRef[3].current.value;
       }
     }
-    console.log(timer + " kjooo");
+    //console.log(timer + " kjooo");
     createQuestion(
       selectedQuestion,
       question,
@@ -707,16 +707,16 @@ const QuizModalPage2 = (props) => {
                 OFF
               </div>
               <div
-                className={`timer ${selectedTimer === "5" && "selected"}`}
-                onClick={() => handleSelectTimer("5")}
+                className={`timer ${selectedTimer === "90" && "selected"}`}
+                onClick={() => handleSelectTimer("90")}
               >
-                5 sec
+                90 sec
               </div>
               <div
-                className={`timer ${selectedTimer === "10" && "selected"}`}
-                onClick={() => handleSelectTimer("10")}
+                className={`timer ${selectedTimer === "30" && "selected"}`}
+                onClick={() => handleSelectTimer("30")}
               >
-                10 sec
+                30 sec
               </div>
               <div
                 className={`timer ${selectedTimer === "60" && "selected"}`}

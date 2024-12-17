@@ -1,0 +1,619 @@
+
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+   <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="description" content="AI-generated website">
+      <meta name="theme-color" content="#ffffff">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta name="robots" content="index, follow">
+      
+      <!-- Performance optimization: Preload critical resources -->
+      <link rel="preload" href="https://cdn.tailwindcss.com" as="script">
+      <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap" as="style">
+      
+      <!-- Core CSS -->
+      <script src="https://cdn.tailwindcss.com"></script>
+      <script>
+        tailwind.config = {
+          theme: {
+            extend: {
+              colors: {
+                primary: {
+                  50: '#f0f9ff',
+                  100: '#e0f2fe',
+                  200: '#bae6fd',
+                  300: '#7dd3fc',
+                  400: '#38bdf8',
+                  500: '#0ea5e9',
+                  600: '#0284c7',
+                  700: '#0369a1',
+                  800: '#075985',
+                  900: '#0c4a6e',
+                  950: '#082f49',
+                },
+                secondary: {
+                  50: '#f0fdf4',
+                  100: '#dcfce7',
+                  200: '#bbf7d0',
+                  300: '#86efac',
+                  400: '#4ade80',
+                  500: '#22c55e',
+                  600: '#16a34a',
+                  700: '#15803d',
+                  800: '#166534',
+                  900: '#14532d',
+                  950: '#052e16',
+                },
+                accent: {
+                  50: '#faf5ff',
+                  100: '#f3e8ff',
+                  200: '#e9d5ff',
+                  300: '#d8b4fe',
+                  400: '#c084fc',
+                  500: '#a855f7',
+                  600: '#9333ea',
+                  700: '#7e22ce',
+                  800: '#6b21a8',
+                  900: '#581c87',
+                  950: '#3b0764',
+                },
+              },
+              fontFamily: {
+                sans: ['Inter', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
+                heading: ['Montserrat', 'Inter', 'system-ui', 'sans-serif'],
+              },
+              spacing: {
+                '18': '4.5rem',
+                '22': '5.5rem',
+                '30': '7.5rem',
+              },
+              maxWidth: {
+                '8xl': '88rem',
+                '9xl': '96rem',
+              },
+              animation: {
+                'fade-in': 'fadeIn 0.5s ease-in',
+                'fade-out': 'fadeOut 0.5s ease-out',
+                'slide-up': 'slideUp 0.5s ease-out',
+                'slide-down': 'slideDown 0.5s ease-out',
+                'slide-left': 'slideLeft 0.5s ease-out',
+                'slide-right': 'slideRight 0.5s ease-out',
+                'scale-in': 'scaleIn 0.5s ease-out',
+                'scale-out': 'scaleOut 0.5s ease-out',
+                'spin-slow': 'spin 3s linear infinite',
+                'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                'bounce-slow': 'bounce 3s infinite',
+                'float': 'float 3s ease-in-out infinite',
+              },
+              keyframes: {
+                fadeIn: {
+                  '0%': { opacity: '0' },
+                  '100%': { opacity: '1' },
+                },
+                fadeOut: {
+                  '0%': { opacity: '1' },
+                  '100%': { opacity: '0' },
+                },
+                slideUp: {
+                  '0%': { transform: 'translateY(20px)', opacity: '0' },
+                  '100%': { transform: 'translateY(0)', opacity: '1' },
+                },
+                slideDown: {
+                  '0%': { transform: 'translateY(-20px)', opacity: '0' },
+                  '100%': { transform: 'translateY(0)', opacity: '1' },
+                },
+                slideLeft: {
+                  '0%': { transform: 'translateX(20px)', opacity: '0' },
+                  '100%': { transform: 'translateX(0)', opacity: '1' },
+                },
+                slideRight: {
+                  '0%': { transform: 'translateX(-20px)', opacity: '0' },
+                  '100%': { transform: 'translateX(0)', opacity: '1' },
+                },
+                scaleIn: {
+                  '0%': { transform: 'scale(0.9)', opacity: '0' },
+                  '100%': { transform: 'scale(1)', opacity: '1' },
+                },
+                scaleOut: {
+                  '0%': { transform: 'scale(1.1)', opacity: '0' },
+                  '100%': { transform: 'scale(1)', opacity: '1' },
+                },
+                float: {
+                  '0%, 100%': { transform: 'translateY(0)' },
+                  '50%': { transform: 'translateY(-10px)' },
+                },
+              },
+              aspectRatio: {
+                'portrait': '3/4',
+                'landscape': '4/3',
+                'ultrawide': '21/9',
+              },
+            },
+          },
+          variants: {
+            extend: {
+              opacity: ['disabled'],
+              cursor: ['disabled'],
+              backgroundColor: ['active', 'disabled'],
+              textColor: ['active', 'disabled'],
+            },
+          },
+        }
+      </script>
+
+      <!-- Utilities and Components -->
+      <script defer src="https://cdnjs.cloudflare.com/ajax/libs/alpinejs/3.13.3/cdn.min.js"></script>
+      <script defer src="https://cdnjs.cloudflare.com/ajax/libs/apexcharts/3.45.1/apexcharts.min.js"></script>
+      
+      <!-- Optimized Font Loading -->
+      <link rel="preconnect" href="https://fonts.googleapis.com">
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+      <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+      
+      <!-- Icons -->
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" 
+            integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+            crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+      <!-- Base Styles -->
+      <style>
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+          width: 0px;
+          height: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+          background: #f1f1f1;
+          border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+          background: #888;
+          border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+          background: #666;
+        }
+
+        /* Remove tap highlight on mobile */
+        * {
+          -webkit-tap-highlight-color: transparent;
+        }
+
+        /* Improve text rendering */
+        body {
+          text-rendering: optimizeLegibility;
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Focus outline styles */
+        :focus-visible {
+          outline: 2px solid currentColor;
+          outline-offset: 2px;
+        }
+
+        /* Print styles */
+        @media print {
+          .no-print {
+            display: none !important;
+          }
+          
+          a[href]:after {
+            content: " (" attr(href) ")";
+          }
+        }
+      </style>
+
+      <!-- Enhanced Image Handler -->
+      <script>
+        document.addEventListener('DOMContentLoaded', () => {
+          const imageObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+              if (entry.isIntersecting) {
+                const img = entry.target;
+                if (img.dataset.src) {
+                  const tempImage = new Image();
+                  tempImage.onload = () => {
+                    img.src = img.dataset.src;
+                    img.classList.remove('opacity-0');
+                    img.classList.add('opacity-100');
+                  };
+                  tempImage.src = img.dataset.src;
+                  img.removeAttribute('data-src');
+                  observer.unobserve(img);
+                }
+              }
+            });
+          }, {
+            rootMargin: '50px 0px',
+            threshold: 0.01
+          });
+
+          const loadImage = (img) => {
+            if ('loading' in HTMLImageElement.prototype) {
+              img.loading = 'lazy';
+            }
+            
+            img.classList.add('transition-opacity', 'duration-300', 'opacity-0');
+            
+            img.onerror = () => {
+              const width = img.getAttribute('width') || img.clientWidth || 300;
+              const height = img.getAttribute('height') || img.clientHeight || 200;
+              img.src = `https://placehold.co/${width}x${height}/DEDEDE/555555?text=Image+Unavailable`;
+              img.alt = 'Image unavailable';
+              img.classList.remove('opacity-0');
+              img.classList.add('opacity-100', 'error-image');
+            };
+
+            if (img.dataset.src) {
+              imageObserver.observe(img);
+            } else {
+              img.classList.remove('opacity-0');
+              img.classList.add('opacity-100');
+            }
+          };
+
+          document.querySelectorAll('img[data-src], img:not([data-src])').forEach(loadImage);
+
+          // Watch for dynamically added images
+          new MutationObserver((mutations) => {
+            mutations.forEach(mutation => {
+              mutation.addedNodes.forEach(node => {
+                if (node.nodeType === 1) {
+                  if (node.tagName === 'IMG') {
+                    loadImage(node);
+                  }
+                  node.querySelectorAll('img').forEach(loadImage);
+                }
+              });
+            });
+          }).observe(document.body, {
+            childList: true,
+            subtree: true
+          });
+        });
+
+        // Performance monitoring
+        if ('performance' in window && 'PerformanceObserver' in window) {
+          // Create performance observer
+          const observer = new PerformanceObserver((list) => {
+            const entries = list.getEntries();
+            entries.forEach((entry) => {
+              if (entry.entryType === 'largest-contentful-paint') {
+                // console.log(`LCP: ${entry.startTime}ms`);
+              }
+              if (entry.entryType === 'first-input') {
+                // console.log(`FID: ${entry.processingStart - entry.startTime}ms`);
+              }
+              if (entry.entryType === 'layout-shift') {
+                // console.log(`CLS: ${entry.value}`);
+              }
+            });
+          });
+
+          // Observe performance metrics
+          observer.observe({ entryTypes: ['largest-contentful-paint', 'first-input', 'layout-shift'] });
+
+          // Log basic performance metrics
+          window.addEventListener('load', () => {
+            const timing = performance.getEntriesByType('navigation')[0];
+            console.log({
+              'DNS Lookup': timing.domainLookupEnd - timing.domainLookupStart,
+              'TCP Connection': timing.connectEnd - timing.connectStart,
+              'DOM Content Loaded': timing.domContentLoadedEventEnd - timing.navigationStart,
+              'Page Load': timing.loadEventEnd - timing.navigationStart
+            });
+          });
+        }
+
+        // Handle offline/online status
+        window.addEventListener('online', () => {
+          document.body.classList.remove('offline');
+          console.log('Connection restored');
+        });
+        
+        window.addEventListener('offline', () => {
+          document.body.classList.add('offline');
+          console.log('Connection lost');
+        });
+      </script>
+   </head>
+   <body class="antialiased text-gray-800 min-h-screen flex flex-col">
+      <!-- Skip to main content link for accessibility -->
+      <a href="#main-content" 
+         class="sr-only focus:not-sr-only focus:absolute focus:top-0 focus:left-0 focus:z-50 focus:p-4 focus:bg-white focus:text-black">
+         Skip to main content
+      </a>
+
+      <!-- Header -->
+      <header class="relative z-50 bg-white dark:bg-gray-900">
+        <!-- Header content goes here -->
+      </header>
+
+      <!-- Main content area -->
+      <main id="main-content" class="flex-1 relative ">
+        <!-- Content will be injected here -->
+      </main>
+
+      <!-- Offline notification -->
+      <div class="fixed bottom-4 right-4 transform translate-y-full opacity-0 transition-all duration-300 offline:translate-y-0 offline:opacity-100">
+        <div class="bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg">
+          You are currently offline
+        </div>
+      </div>
+   </body>
+</html><element id="72f7ae96-4092-435c-a638-8e6cfa59b856" data-section-id="72f7ae96-4092-435c-a638-8e6cfa59b856">
+
+<htmlCode>
+<div id="root">
+    <section id="thank_you_card" class="min-h-screen flex flex-col items-center justify-center text-center relative overflow-hidden bg-gradient-to-br from-slate-900 to-slate-800">
+        <!-- Main Container -->
+        <div class="glass-effect max-w-md w-full mx-4 animate-scale-in relative z-10 backdrop-blur-lg bg-white/10 rounded-2xl p-8 border border-white/20">
+            <!-- Success Icon -->
+            <div class="mb-8">
+                <div class="w-20 h-20 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full flex items-center justify-center mx-auto animate-float">
+                    <i class="fas fa-check text-3xl text-white animate-pulse"></i>
+                </div>
+            </div>
+
+            <!-- Thank You Message -->
+            <h1 class="text-5xl font-bold mb-4 text-white animate-fade-in bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
+                Thank You!
+            </h1>
+            <p class="text-lg mb-8 text-gray-200 animate-fade-in opacity-90">
+                Your response has been successfully submitted.
+            </p>
+
+            <!-- Social Links -->
+            <div class="flex justify-center gap-4 mb-8">
+                <a href="https://web.telegram.org/a/#-1001949713529" class="social-link bg-blue-500 hover:bg-blue-600 p-3 rounded-full transform hover:scale-110 transition-all">
+                    <i class="fab fa-telegram text-white text-xl"></i>
+                </a>
+                <a href="https://www.instagram.com/codexiter?igsh=MXBla2Z1bnhvZjR6OQ==" class="social-link bg-gradient-to-br from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 p-3 rounded-full transform hover:scale-110 transition-all">
+                    <i class="fab fa-instagram text-white text-xl"></i>
+                </a>
+                <a href="https://www.linkedin.com/company/codex-iter/posts/?feedView=all" class="social-link bg-blue-600 hover:bg-blue-700 p-3 rounded-full transform hover:scale-110 transition-all">
+                    <i class="fab fa-linkedin text-white text-xl"></i>
+                </a>
+                <a href="https://start.codex-iter.in/" class="social-link bg-green-500 hover:bg-green-600 p-3 rounded-full transform hover:scale-110 transition-all">
+                    <i class="fas fa-globe text-white text-xl"></i>
+                </a>
+            </div>
+
+            <!-- Return Home Button -->
+            <!-- <a href="index.html" class="inline-block px-8 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white font-semibold rounded-lg shadow-lg transform hover:scale-105 transition-all duration-300 hover:from-blue-600 hover:to-blue-700">
+                Return to Home
+            </a> -->
+        </div>
+
+        <!-- Animated Background Elements -->
+        <div class="absolute inset-0 overflow-hidden">
+            <div class="absolute w-3 h-3 bg-blue-400/30 rounded-full animate-float" style="top: 20%; left: 30%; animation-delay: 0.5s;"></div>
+            <div class="absolute w-4 h-4 bg-purple-400/30 rounded-full animate-float" style="top: 50%; left: 60%; animation-delay: 1s;"></div>
+            <div class="absolute w-2 h-2 bg-pink-400/30 rounded-full animate-float" style="top: 70%; left: 40%; animation-delay: 1.5s;"></div>
+            <div class="absolute w-3 h-3 bg-blue-400/30 rounded-full animate-float" style="top: 10%; left: 80%; animation-delay: 2s;"></div>
+            <div class="absolute w-2 h-2 bg-purple-400/30 rounded-full animate-float" style="top: 40%; left: 20%; animation-delay: 2.5s;"></div>
+        </div>
+    </section>
+</div>
+
+<style>
+@keyframes float {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-20px) rotate(10deg); }
+}
+
+.animate-float {
+    animation: float 3s ease-in-out infinite;
+}
+
+.animate-scale-in {
+    animation: scaleIn 0.5s ease-out forwards;
+}
+
+@keyframes scaleIn {
+    from {
+        transform: scale(0.9);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.animate-pulse {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.glass-effect {
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.social-link {
+    transition: all 0.3s ease;
+}
+</style>
+</htmlCode></element><element id="b8795e2a-0eb4-4b2b-b091-0e0da63e704b" data-section-id="b8795e2a-0eb4-4b2b-b091-0e0da63e704b">
+
+<htmlCode>
+<!-- <div id="root">
+    <section id="social_links" class="relative py-8 px-4">
+        <div class="max-w-lg mx-auto">
+            <!-- Social Links Container -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                <!-- Telegram -->
+                <!-- <a href="#" class="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-400 to-blue-600 p-4 transform hover:scale-105 transition-all duration-300">
+                    <div class="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <div class="relative z-10 flex flex-col items-center space-y-2">
+                        <div class="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center">
+                            <i class="fab fa-telegram text-2xl text-white animate-bounce-slow"></i>
+                        </div>
+                        <span class="text-white font-semibold">Telegram</span>
+                    </div>
+                </a> -->
+
+                <!-- Instagram -->
+                <!-- <a href="#" class="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-pink-500 via-purple-500 to-orange-400 p-4 transform hover:scale-105 transition-all duration-300">
+                    <div class="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <div class="relative z-10 flex flex-col items-center space-y-2">
+                        <div class="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center">
+                            <i class="fab fa-instagram text-2xl text-white animate-bounce-slow"></i>
+                        </div>
+                        <span class="text-white font-semibold">Instagram</span>
+                    </div>
+                </a> -->
+
+                <!-- LinkedIn -->
+                <!-- <a href="#" class="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-600 to-blue-800 p-4 transform hover:scale-105 transition-all duration-300">
+                    <div class="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <div class="relative z-10 flex flex-col items-center space-y-2">
+                        <div class="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center">
+                            <i class="fab fa-linkedin-in text-2xl text-white animate-bounce-slow"></i>
+                        </div>
+                        <span class="text-white font-semibold">LinkedIn</span>
+                    </div>
+                </a> -->
+
+                <!-- Website -->
+                <!-- <a href="#" class="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-green-400 to-green-600 p-4 transform hover:scale-105 transition-all duration-300">
+                    <div class="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <div class="relative z-10 flex flex-col items-center space-y-2">
+                        <div class="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center">
+                            <i class="fas fa-globe text-2xl text-white animate-bounce-slow"></i>
+                        </div>
+                        <span class="text-white font-semibold">Website</span>
+                    </div>
+                </a> -->
+            </div>
+        </div> 
+
+        <!-- Decorative Elements -->
+        <!-- <div class="absolute top-0 left-0 w-full h-full overflow-hidden -z-10">
+            <div class="absolute w-2 h-2 bg-blue-400/20 rounded-full animate-float" style="top: 10%; left: 10%; animation-delay: 0.2s;"></div>
+            <div class="absolute w-3 h-3 bg-purple-400/20 rounded-full animate-float" style="top: 30%; right: 20%; animation-delay: 0.5s;"></div>
+            <div class="absolute w-2 h-2 bg-pink-400/20 rounded-full animate-float" style="bottom: 20%; left: 30%; animation-delay: 0.8s;"></div>
+            <div class="absolute w-4 h-4 bg-green-400/20 rounded-full animate-float" style="bottom: 10%; right: 10%; animation-delay: 1.1s;"></div>
+        </div>
+    </section> -->
+</div>
+
+<style>
+@keyframes float {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-20px) rotate(10deg); }
+}
+
+.animate-float {
+    animation: float 3s ease-in-out infinite;
+}
+
+.animate-bounce-slow {
+    animation: bounce 2s infinite;
+}
+</style>
+</htmlCode></element><element id="ea686727-3371-45e6-8015-0bc2bb4ec966" data-section-id="ea686727-3371-45e6-8015-0bc2bb4ec966">
+
+<htmlCode>
+<div id="root">
+    <section id="background_effects" class="fixed inset-0 pointer-events-none overflow-hidden">
+        <!-- Gradient overlay -->
+        <div class="absolute inset-0 bg-gradient-to-br from-slate-900 to-slate-800 opacity-90"></div>
+
+        <!-- Animated particles -->
+        <div class="particle-container absolute inset-0">
+            <!-- Large glowing orbs -->
+            <div class="absolute w-64 h-64 bg-blue-500/10 rounded-full blur-3xl animate-float" style="top: -5%; left: -5%; animation-delay: 0s;"></div>
+            <div class="absolute w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-float-reverse" style="top: 60%; right: -10%; animation-delay: 1s;"></div>
+            
+            <!-- Moving stars -->
+            <div class="stars absolute inset-0">
+                <div class="star absolute w-1 h-1 bg-white rounded-full animate-twinkle" style="top: 15%; left: 25%; animation-delay: 0.5s;"></div>
+                <div class="star absolute w-1.5 h-1.5 bg-white rounded-full animate-twinkle" style="top: 45%; left: 55%; animation-delay: 1.2s;"></div>
+                <div class="star absolute w-1 h-1 bg-white rounded-full animate-twinkle" style="top: 75%; left: 35%; animation-delay: 0.8s;"></div>
+                <div class="star absolute w-2 h-2 bg-white rounded-full animate-twinkle" style="top: 25%; left: 85%; animation-delay: 1.5s;"></div>
+                <div class="star absolute w-1 h-1 bg-white rounded-full animate-twinkle" style="top: 65%; left: 15%; animation-delay: 0.3s;"></div>
+            </div>
+
+            <!-- Floating shapes -->
+            <div class="absolute w-16 h-16 border-2 border-blue-300/20 rounded-lg animate-spin-slow" style="top: 20%; left: 20%; transform: rotate(45deg);"></div>
+            <div class="absolute w-20 h-20 border-2 border-purple-300/20 rounded-full animate-spin-reverse" style="bottom: 30%; right: 25%;"></div>
+            
+            <!-- Shooting stars -->
+            <div class="shooting-star absolute w-32 h-px bg-gradient-to-r from-transparent via-white to-transparent animate-shooting-star" style="top: 20%; left: -10%;"></div>
+            <div class="shooting-star absolute w-32 h-px bg-gradient-to-r from-transparent via-white to-transparent animate-shooting-star" style="top: 50%; left: -10%; animation-delay: 2s;"></div>
+        </div>
+    </section>
+</div>
+
+<style>
+@keyframes float {
+    0%, 100% { transform: translate(0, 0); }
+    50% { transform: translate(20px, -20px); }
+}
+
+@keyframes float-reverse {
+    0%, 100% { transform: translate(0, 0); }
+    50% { transform: translate(-20px, 20px); }
+}
+
+@keyframes twinkle {
+    0%, 100% { opacity: 0.2; transform: scale(0.8); }
+    50% { opacity: 1; transform: scale(1.2); }
+}
+
+@keyframes shooting-star {
+    0% { transform: translateX(0) translateY(0) rotate(-45deg); opacity: 0; }
+    20% { opacity: 1; }
+    40% { opacity: 0; }
+    100% { transform: translateX(200px) translateY(200px) rotate(-45deg); opacity: 0; }
+}
+
+@keyframes spin-slow {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes spin-reverse {
+    0% { transform: rotate(360deg); }
+    100% { transform: rotate(0deg); }
+}
+
+.animate-float {
+    animation: float 8s infinite ease-in-out;
+}
+
+.animate-float-reverse {
+    animation: float-reverse 8s infinite ease-in-out;
+}
+
+.animate-twinkle {
+    animation: twinkle 4s infinite ease-in-out;
+}
+
+.animate-shooting-star {
+    animation: shooting-star 4s infinite linear;
+}
+
+.animate-spin-slow {
+    animation: spin-slow 12s infinite linear;
+}
+
+.animate-spin-reverse {
+    animation: spin-reverse 12s infinite linear;
+}
+</style>
+</htmlCode></element>
+            <div id="page_complete">
+            <script>
+                console.log('Page complete');
+            </script>
+            </body>
+            </html>
+          

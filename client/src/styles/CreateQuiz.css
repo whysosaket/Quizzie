@@ -1,0 +1,416 @@
+.modal{
+    background-color: rgba(0, 0, 0, 0.7);
+    height: 100vh;
+    width: 100vw;
+    position: absolute;
+    color: #a5a5a5;
+}
+
+.modal .page{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    width: 40%;
+    height: 30%;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+}
+
+.modal .page.page2{
+    height: 60%;
+}
+
+.modal input[type="text"]{
+    width: 90%;
+    color: #a5a5a5;
+    padding: 1rem;
+    border: none;
+    border-radius: 12px;
+    margin: 0.5rem 0;
+    font-size: 1rem;
+    box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.2);
+}
+
+.modal input[type="text"]:focus{
+    outline: none;
+}
+
+.modal .quiztype{
+    width: 90%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal .quiztype h3{
+    font-size: 1rem;
+    font-weight: 500;
+    margin: 0;
+}
+
+.modal .quiztype input[type="radio"]{
+    width: 1rem;
+    height: 1rem;
+    margin: 0;
+    margin-bottom: 2rem;
+}
+
+.quiztypebtns{
+    width: 60%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.quiztypebtns button{
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    color: #a5a5a5;
+    background-color: white;
+    box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.2);
+}
+
+.quiztypebtns button:hover{
+    background-color: #60B84B;
+    color: white;
+}
+
+.quiztypebtns .selected{
+    background-color: #60B84B;
+    color: white;
+}
+
+.cancelconfirm{
+    width: 90%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 2rem;
+}
+
+.cancelconfirm button{
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    color: #a5a5a5;
+    background-color: white;
+    box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.2);
+    width: 200px;;
+}
+
+.cancelconfirm .cancelbtn{
+    color: black;
+}
+
+.cancelconfirm .cancelbtn:hover{
+    color: #60B84B;
+}
+
+.cancelconfirm .confirmbtn{
+    color: white;
+    background-color: #60B84B;
+}
+
+.cancelconfirm .confirmbtn:hover{
+    background-color: #3f8f2b;
+}
+
+.modal .questionselector{
+    border-radius: 100%;
+    border: 1px solid #a5a5a5;
+    width: 2.5rem;
+    height: 2.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.2);
+    margin-right: 0.2rem;
+}
+
+.questionselector:hover{
+    background-color: #60B84B;
+    color: white;
+}
+
+.modal .topbar{
+    width: 90%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.modal .topbar h6{
+    font-size: 1rem;
+    font-weight: 300;
+    margin: 0;
+}
+
+.modal .topbarleft{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal .question {
+    width: 90%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.modal .question input[type="text"]{
+    width: 95%;
+    color: #a5a5a5;
+    padding: 1rem;
+    border: none;
+    border-radius: 12px;
+    margin-top: 0.5rem;
+    font-size: 1rem;
+    box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.2);
+}
+
+.modal .questiontype{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 90%;
+}
+
+.modal .questiontype label{
+    margin: 0 0.5rem;
+}
+
+.modal .page .bottombar{
+    display: flex;
+    display: space-between;
+    align-items: center;
+    width: 90%;
+}
+
+.modal .page .bottomleft{
+    width: 70%;
+}
+
+.modal .page .bottomright{
+    width: 35%;
+    display: flex;
+    justify-content: flex-end;
+    padding: 1rem;
+}
+
+.bottomright .timeroptions{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.bottomright h6{
+    font-size: 1rem;
+    font-weight: 300;
+    margin: 0;
+}
+
+.timeroptions .timer{
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.2);
+    padding: 0.3rem 0.7rem;
+    width: 80px;
+    text-align: center;
+    margin-top: 1rem;
+    cursor: pointer;
+}
+
+.timeroptions .timer.selected{
+    background-color: #D60000;
+    color: white;
+}
+
+.timeroptions .timer:hover{
+    background-color: #D60000;
+    color: white;
+}
+
+.modal .bottomleft label{
+    display: flex;
+}
+
+.modal .bottomleft label input[type="text"]{
+    width: 90%;
+    color: #a5a5a5;
+    padding: 0.8rem;
+    border: none;
+    border-radius: 8px;
+    margin-top: 0.5rem;
+    margin-left: 0.3rem;
+    font-size: 1rem;
+    box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.2);
+}
+
+.modal .bottomleft label input[type="text"].selected {
+    background-color: #60B84B;
+    color: white;
+}
+
+.modal .bottomleft label input[type="text"].selected::placeholder{
+    color: white;
+}
+
+.addoption{
+    width: 60%;
+    text-align: center;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.2);
+    padding: 0.5rem 0;
+    margin-left: 1.5rem;
+    margin-top: 0.5rem;
+    color: black;
+    cursor: pointer;
+}
+
+.addoption:hover{
+    background-color: #60B84B;
+    color: white;
+}
+
+.modal .poll.page .bottomright{
+    display: none;
+}
+
+.modal .poll.page .bottomleft{
+    width: 90%;
+}
+
+.cross{
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+
+.cross:hover{
+    color: #60B84B;
+}
+
+.cong h2{
+    font-size: 2rem;
+    font-weight: 500;
+    text-align: center;
+    color: black;
+}
+
+.cong button{
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    color: white;
+    background-color: #60B84B;
+    box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.2);
+    width: 200px;
+    margin: 0 auto;
+    display: block;
+}
+
+.cong button:hover{
+    background-color: #3f8f2b;
+}
+
+.optionnnn{
+    display: flex;
+    align-items: center;
+}
+
+.optionnnn .deleteicon{
+    margin-left: 0.5rem;
+}
+
+.questionselector.selected{
+    background-color: #60B84B;
+    color: white;
+}
+
+.confirmbtn.oo{
+    color: white;
+    background-color: #60B84B;
+    margin: auto;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 0.5rem 1rem;
+}
+
+.confirmbtn.oo:hover{
+    background-color: #3f8f2b;
+}
+
+.saveicon{
+    margin-left: 0.5rem;
+    cursor: pointer;
+    color: #60B84B;
+}
+
+.saveicon:hover{
+    color: #3f8f2b;
+    background-color: white;
+}
+
+.questionselector .cross{
+    position: relative;
+    color: black;
+    font-size: 1rem;
+    cursor: pointer;
+    left: 0.5rem;
+}
+
+.modal .share{
+    margin-top: 2rem;
+}
+
+@media screen and (max-width: 768px){
+    .modal{
+        height: 100%;
+        width: 100%;
+    }
+
+    .modal .page{
+        width: 80%;
+        height: 40%;
+    }
+
+    .modal .quiztype{
+        flex-direction: column;
+    }
+
+    .modal .quiztypebtns{
+        flex-direction: column;
+    }
+
+    .modal .quiztypebtns button{
+        width: 100%;
+        margin: 0.5rem 0;
+    }
+}

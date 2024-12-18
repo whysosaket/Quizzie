@@ -57,9 +57,6 @@ const Questions = (props) => {
   }, [isStarted, timer, questionNumber]);
 
   const checkIfAttempted = async (email, regNo) => {
-    // console.log(takeQuizInfo);
-    // console.log("SEPERSTOR");
-    // console.log(takeQuizQuestions);
     try {
       const response = await fetch(
         `${url}/api/quiz/check_attempt?email=${encodeURIComponent(
@@ -74,7 +71,6 @@ const Questions = (props) => {
       );
 
       const result = await response.json();
-      //console.log(result);
       return { success: result.success, message: result.message };
     } catch (error) {
       console.error("Error in checkIfAttempted:", error);
@@ -88,11 +84,6 @@ const Questions = (props) => {
       toast("Please enter a valid Gmail address.");
       return;
     }
-    // const regNoRegex = /^\d{10}$/;
-    // if (!regNo || !regNoRegex.test(regNo)) {
-    //   toast("Please enter a valid 10-digit registration number.");
-    //   return;
-    // }
 
     const { success, message } = await checkIfAttempted(email, regNo);
 

@@ -3,8 +3,6 @@ import QuizContext from "../../context/QuizContext";
 import { useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 
-const delimeter = "@1&2^";
-
 const Questions = (props) => {
   let url = import.meta.env.VITE_URL || "http://localhost:9000";
   const location = useLocation();
@@ -20,13 +18,13 @@ const Questions = (props) => {
   const [timer, setTimer] = useState(0);
   const [selected, setSelected] = useState(-1);
   const [questionTimers, setQuestionTimers] = useState([]);
+
   useEffect(() => {
     getQuiz(location.pathname.split("/")[2]);
   }, []);
 
   useEffect(() => {
     let countdown;
-
     if (
       takeQuizQuestions[questionNumber] &&
       takeQuizQuestions[questionNumber].timer === 0
@@ -57,9 +55,6 @@ const Questions = (props) => {
   }, [isStarted, timer, questionNumber]);
 
   const checkIfAttempted = async (email, regNo) => {
-    // console.log(takeQuizInfo);
-    // console.log("SEPERSTOR");
-    // console.log(takeQuizQuestions);
     try {
       const response = await fetch(
         `${url}/api/quiz/check_attempt?email=${encodeURIComponent(
@@ -74,7 +69,6 @@ const Questions = (props) => {
       );
 
       const result = await response.json();
-      //console.log(result);
       return { success: result.success, message: result.message };
     } catch (error) {
       console.error("Error in checkIfAttempted:", error);
@@ -88,14 +82,7 @@ const Questions = (props) => {
       toast("Please enter a valid Gmail address.");
       return;
     }
-    // const regNoRegex = /^\d{10}$/;
-    // if (!regNo || !regNoRegex.test(regNo)) {
-    //   toast("Please enter a valid 10-digit registration number.");
-    //   return;
-    // }
-
     const { success, message } = await checkIfAttempted(email, regNo);
-
     if (success) {
       toast(message);
       return;
@@ -112,7 +99,6 @@ const Questions = (props) => {
   const handleNext = () => {
     const newAnswers = [...answers];
     newAnswers.push(selected);
-
     const newTimers = [...questionTimers];
     newTimers[questionNumber] = takeQuizQuestions[questionNumber].timer - timer;
 
@@ -126,26 +112,21 @@ const Questions = (props) => {
   const handleFinish = async () => {
     let newAnswers = [...answers];
     newAnswers.push(selected);
-
     const newTimers = [...questionTimers];
     newTimers[questionNumber] = takeQuizQuestions[questionNumber].timer - timer;
 
-    let finalAnswers = [];
-    for (let i = 0; i < takeQuizInfo.quesRandom.length; i++) {
-      let ans = "";
-      if (takeQuizQuestions[i].optionType === "text") {
-        ans += takeQuizQuestions[i].options[newAnswers[i]];
-        ans += delimeter;
-      } else if (takeQuizQuestions[i].optionType === "img") {
-        ans += delimeter;
-        ans += takeQuizQuestions[i].imageOptions[newAnswers[i]];
-      } else if (takeQuizQuestions[i].optionType === "both") {
-        ans += takeQuizQuestions[i].options[newAnswers[i]];
-        ans += delimeter;
-        ans += takeQuizQuestions[i].imageOptions[newAnswers[i]];
+    let finalAnswers = takeQuizQuestions.map((q, i) => {
+      if (q.optionType === "text") {
+        return q.options[newAnswers[i]] + delimeter;
+      } else if (q.optionType === "img") {
+        return delimeter + q.imageOptions[newAnswers[i]];
+      } else if (q.optionType === "both") {
+        return (
+          q.options[newAnswers[i]] + delimeter + q.imageOptions[newAnswers[i]]
+        );
       }
-      finalAnswers.push(ans);
-    }
+      return "";
+    });
 
     const quizData = {
       email,
@@ -163,8 +144,10 @@ const Questions = (props) => {
     await takeQuiz(quizData);
     setIsFinished(true);
   };
+
+  // here is the actual quiz part
   return (
-    <>
+    <div className="quizcontainer"> {/* Added the quizcontainer class here */}
       {isStarted ? (
         <div className="questions">
           <div className="qtopbar">
@@ -179,142 +162,34 @@ const Questions = (props) => {
                 </h2>
               )}
           </div>
+          <div className="question-container">
+            <h2 className="question">
+              {takeQuizQuestions[questionNumber] && (
+                <pre style={{ whiteSpace: "pre-wrap", wordWrap: "break-word" }}>
+                  {takeQuizQuestions[questionNumber].question}
+                </pre>
+              )}
+            </h2>
+          </div>
 
-          <h2 className="question">
-            {takeQuizQuestions[questionNumber] && (
-              <pre>{takeQuizQuestions[questionNumber].question}</pre>
-            )}
-          </h2>
-
-          {takeQuizQuestions[questionNumber] &&
-            takeQuizQuestions[questionNumber].optionType === "text" && (
-              <div className="options">
-                <div
-                  onClick={() => handleSelected(0)}
-                  className={`option ${selected === 0 && "selected"}`}
-                >
-                  {takeQuizQuestions[questionNumber].options[0]}
-                </div>
-                <div
-                  onClick={() => handleSelected(1)}
-                  className={`option ${selected === 1 && "selected"}`}
-                >
-                  {takeQuizQuestions[questionNumber].options[1]}
-                </div>
-                {takeQuizQuestions[questionNumber].options[2] && (
-                  <div
-                    onClick={() => handleSelected(2)}
-                    className={`option ${selected === 2 && "selected"}`}
-                  >
-                    {takeQuizQuestions[questionNumber].options[2]}
-                  </div>
-                )}
-                {takeQuizQuestions[questionNumber].options[3] && (
-                  <div
-                    onClick={() => handleSelected(3)}
-                    className={`option ${selected === 3 && "selected"}`}
-                  >
-                    {takeQuizQuestions[questionNumber].options[3]}
-                  </div>
+          {/* Options: text, image, or both */}
+          <div className="options">
+            {takeQuizQuestions[questionNumber]?.options?.map((option, i) => (
+              <div
+                key={i}
+                onClick={() => handleSelected(i)}
+                className={`option ${selected === i ? "selected" : ""}`}
+              >
+                {option}
+                {takeQuizQuestions[questionNumber]?.imageOptions?.[i] && (
+                  <img
+                    src={takeQuizQuestions[questionNumber]?.imageOptions[i]}
+                    alt={`option-${i}`}
+                  />
                 )}
               </div>
-            )}
-
-          {takeQuizQuestions[questionNumber] &&
-            takeQuizQuestions[questionNumber].optionType === "img" && (
-              <div className="options">
-                <div
-                  onClick={() => handleSelected(0)}
-                  className={`option ${selected === 0 && "selected"}`}
-                >
-                  <img
-                    src={takeQuizQuestions[questionNumber].imageOptions[0]}
-                    alt="option1"
-                  />
-                </div>
-                <div
-                  onClick={() => handleSelected(1)}
-                  className={`option ${selected === 1 && "selected"}`}
-                >
-                  <img
-                    src={takeQuizQuestions[questionNumber].imageOptions[1]}
-                    alt="option2"
-                  />
-                </div>
-                {takeQuizQuestions[questionNumber].imageOptions[2] && (
-                  <div
-                    onClick={() => handleSelected(2)}
-                    className={`option ${selected === 2 && "selected"}`}
-                  >
-                    <img
-                      src={takeQuizQuestions[questionNumber].imageOptions[2]}
-                      alt="option3"
-                    />
-                  </div>
-                )}
-                {takeQuizQuestions[questionNumber].imageOptions[3] && (
-                  <div
-                    onClick={() => handleSelected(3)}
-                    className={`option ${selected === 3 && "selected"}`}
-                  >
-                    <img
-                      src={takeQuizQuestions[questionNumber].imageOptions[3]}
-                      alt="option4"
-                    />
-                  </div>
-                )}
-              </div>
-            )}
-
-          {takeQuizQuestions[questionNumber] &&
-            takeQuizQuestions[questionNumber].optionType === "both" && (
-              <div className="options">
-                <div
-                  onClick={() => handleSelected(0)}
-                  className={`option both ${selected === 0 && "selected"}`}
-                >
-                  {takeQuizQuestions[questionNumber].options[0]}
-                  <img
-                    src={takeQuizQuestions[questionNumber].imageOptions[0]}
-                    alt="option1"
-                  />
-                </div>
-                <div
-                  onClick={() => handleSelected(1)}
-                  className={`option both ${selected === 1 && "selected"}`}
-                >
-                  {takeQuizQuestions[questionNumber].options[1]}
-                  <img
-                    src={takeQuizQuestions[questionNumber].imageOptions[1]}
-                    alt="option2"
-                  />
-                </div>
-                {takeQuizQuestions[questionNumber].imageOptions[2] && (
-                  <div
-                    onClick={() => handleSelected(2)}
-                    className={`option both ${selected === 2 && "selected"}`}
-                  >
-                    {takeQuizQuestions[questionNumber].options[2]}
-                    <img
-                      src={takeQuizQuestions[questionNumber].imageOptions[2]}
-                      alt="option3"
-                    />
-                  </div>
-                )}
-                {takeQuizQuestions[questionNumber].imageOptions[3] && (
-                  <div
-                    onClick={() => handleSelected(3)}
-                    className={`option both ${selected === 3 && "selected"}`}
-                  >
-                    {takeQuizQuestions[questionNumber].options[3]}
-                    <img
-                      src={takeQuizQuestions[questionNumber].imageOptions[3]}
-                      alt="option4"
-                    />
-                  </div>
-                )}
-              </div>
-            )}
+            ))}
+          </div>
 
           <div className="submit">
             {questionNumber < takeQuizInfo.quesRandom.length - 1 ? (
@@ -329,76 +204,59 @@ const Questions = (props) => {
           </div>
         </div>
       ) : (
-        <div className="questions startquiz">
-          <h1
-            style={{
-              fontSize: "2rem",
-              color: "#1a73e8",
-              fontWeight: "bold",
-            }}
-          >
-            {takeQuizInfo.name}
+        <div className="login startquiz glass-effect-container">
+          <h1 style={{ fontSize: "2rem", color: "#5789fg", fontWeight: "bold" }}>
+            {takeQuizInfo.name} start
           </h1>
+
           <input
             type="email"
             placeholder="Enter your email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            pattern="^[a-zA-Z0-9._%+-]+@gmail\.com$"
-            title="Please enter a valid Gmail address."
-            style={{
-              width: "100%",
-              padding: "10px 15px",
-              fontSize: "1rem",
-              border: "2px solid #ddd",
-              borderRadius: "8px",
-              boxSizing: "border-box",
-              marginBottom: "10px",
-            }}
+            style={inputStyle}
             required
           />
 
           <input
-            type=""
+            type="text"
             placeholder="Enter your registration number"
             value={regNo}
             onChange={(e) => setRegNo(e.target.value)}
             maxLength={10}
-            pattern="^\d{10}$"
-            title="Registration number must be 10 digits"
-            style={{
-              width: "100%",
-              padding: "10px 15px",
-              fontSize: "1rem",
-              border: "2px solid #ddd",
-              borderRadius: "8px",
-              boxSizing: "border-box",
-              marginBottom: "20px",
-            }}
+            style={inputStyle}
             required
           />
 
-          <button
-            onClick={startQuiz}
-            style={{
-              width: "100%",
-              padding: "12px 15px",
-              fontSize: "1.2rem",
-              color: "white",
-              backgroundColor: "green",
-              border: "none",
-              borderRadius: "8px",
-              cursor: "pointer",
-              boxSizing: "border-box",
-              fontWeight: "bold",
-            }}
-          >
+          <button onClick={startQuiz} style={buttonStyle}>
             Start Quiz
           </button>
         </div>
       )}
-    </>
+    </div>
   );
+};
+
+// Input and button styles for responsiveness
+const inputStyle = {
+  width: "100%",
+  padding: "10px 15px",
+  fontSize: "1rem",
+  border: "2px solid #ddd",
+  borderRadius: "8px",
+  boxSizing: "border-box",
+  marginBottom: "10px",
+};
+
+const buttonStyle = {
+  width: "100%",
+  padding: "12px 15px",
+  fontSize: "1.2rem",
+  color: "white",
+  backgroundColor: "green",
+  border: "none",
+  borderRadius: "8px",
+  cursor: "pointer",
 };
 
 export default Questions;

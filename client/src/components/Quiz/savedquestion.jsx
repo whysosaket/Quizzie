@@ -18,7 +18,6 @@ const Questions = (props) => {
   const [timer, setTimer] = useState(0);
   const [selected, setSelected] = useState(-1);
   const [questionTimers, setQuestionTimers] = useState([]);
-  const [isCompleted, setIsCompleted] = useState(false); // New state to track completion
 
   useEffect(() => {
     getQuiz(location.pathname.split("/")[2]);
@@ -140,78 +139,70 @@ const Questions = (props) => {
     if (takeQuizInfo.type === "poll") {
       await takePoll(takeQuizInfo.quizID, finalAnswers);
       setIsFinished(true);
-      setIsCompleted(true); // Set completion status
       return;
     }
     await takeQuiz(quizData);
     setIsFinished(true);
-    setIsCompleted(true); // Set completion status
   };
 
   // here is the actual quiz part
   return (
     <div className="quizcontainer"> {/* Added the quizcontainer class here */}
       {isStarted ? (
-        isCompleted ? (
-          <div className="congratulations">
-            <h1>Congratulations! You have completed the quiz.</h1>
-          </div>
-        ) : (
-          <div className="questions">
-            <div className="qtopbar">
-              <h2 className="questionno">
-                0{questionNumber + 1}/0{takeQuizInfo.quesRandom.length}
-              </h2>
-              {takeQuizInfo.type === "qna" &&
-                takeQuizQuestions[questionNumber] &&
-                takeQuizQuestions[questionNumber].timer > 0 && (
-                  <h2 className="timer">
-                    00:{timer < 10 ? "0" : ""} {timer}s
-                  </h2>
-                )}
-            </div>
-            <div className="question-container">
-              <h2 className="question">
-                {takeQuizQuestions[questionNumber] && (
-                  <pre style={{ whiteSpace: "pre-wrap", wordWrap: "break-word", overflow: "visible", maxHeight: "none" }}>
-                    {takeQuizQuestions[questionNumber].question}
-                  </pre>
-                )}
-              </h2>
-            </div>
-
-            {/* Options: text, image, or both */}
-            <div className="options">
-              {takeQuizQuestions[questionNumber]?.options?.map((option, i) => (
-                <div
-                  key={i}
-                  onClick={() => handleSelected(i)}
-                  className={`option ${selected === i ? "selected" : ""}`}
-                >
-                  {option}
-                  {takeQuizQuestions[questionNumber]?.imageOptions?.[i] && (
-                    <img
-                      src={takeQuizQuestions[questionNumber]?.imageOptions[i]}
-                      alt={`option-${i}`}
-                    />
-                  )}
-                </div>
-              ))}
-            </div>
-
-            <div className="submit">
-              {questionNumber < takeQuizInfo.quesRandom.length - 1 ? (
-                <div onClick={handleNext} className="submitbtn">
-                  Next
-                </div>
-              ) : (
-                <div onClick={handleFinish} className="submitbtn">
-                  Submit
-                </div>
+        <div className="questions">
+          <div className="qtopbar">
+            <h2 className="questionno">
+              0{questionNumber + 1}/0{takeQuizInfo.quesRandom.length}
+            </h2>
+            {takeQuizInfo.type === "qna" &&
+              takeQuizQuestions[questionNumber] &&
+              takeQuizQuestions[questionNumber].timer > 0 && (
+                <h2 className="timer">
+                  00:{timer < 10 ? "0" : ""} {timer}s
+                </h2>
               )}
-            </div>
           </div>
-        )
+          <div className="question-container">
+            <h2 className="question">
+              {takeQuizQuestions[questionNumber] && (
+                <pre style={{ whiteSpace: "pre-wrap", wordWrap: "break-word" }}>
+                  {takeQuizQuestions[questionNumber].question}
+                </pre>
+              )}
+            </h2>
+          </div>
+
+          {/* Options: text, image, or both */}
+          <div className="options">
+            {takeQuizQuestions[questionNumber]?.options?.map((option, i) => (
+              <div
+                key={i}
+                onClick={() => handleSelected(i)}
+                className={`option ${selected === i ? "selected" : ""}`}
+              >
+                {option}
+                {takeQuizQuestions[questionNumber]?.imageOptions?.[i] && (
+                  <img
+                    src={takeQuizQuestions[questionNumber]?.imageOptions[i]}
+                    alt={`option-${i}`}
+                  />
+                )}
+              </div>
+            ))}
+          </div>
+
+          <div className="submit">
+            {questionNumber < takeQuizInfo.quesRandom.length - 1 ? (
+              <div onClick={handleNext} className="submitbtn">
+                Next
+              </div>
+            ) : (
+              <div onClick={handleFinish} className="submitbtn">
+                Submit
+              </div>
+            )}
+          </div>
+        </div>
       ) : (
         <div className="login startquiz glass-effect-container">
           <h1 style={{ fontSize: "2rem", color: "#5789fg", fontWeight: "bold" }}>
@@ -269,3 +260,5 @@ const buttonStyle = {
 };
 
 export default Questions;
+
+// to d if question is too big then its starting part is not commming also the timer is not showing

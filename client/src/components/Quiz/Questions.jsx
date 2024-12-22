@@ -3,6 +3,7 @@ import QuizContext from "../../context/QuizContext";
 import { useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 const delimeter = "@1&2^";
+// added delimeter
 
 const Questions = (props) => {
   let url = import.meta.env.VITE_URL || "http://localhost:9000";

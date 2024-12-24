@@ -78,6 +78,7 @@ const QuizState = (props) => {
     const { name, type } = quizInfo;
     const questionss = [...questions];
     const body = { name, type, questions: questionss };
+
     try {
       const response = await fetch(`${url}/api/quiz/create`, {
         method: "POST",
@@ -88,6 +89,7 @@ const QuizState = (props) => {
         body: JSON.stringify(body),
       });
       const data = await response.json();
+
       if (data.success) {
         toastMessage(data.info, "success");
         setShareLink(`${clientUrl}/quiz/${data.quizID}`);
@@ -127,6 +129,7 @@ const QuizState = (props) => {
       const data = await response.json();
       if (data.success) {
         const { name, type, question, questions, quizID } = data.quiz;
+
         let quesRandom = [];
         var random = 5;
         let easyQues = [];
@@ -142,11 +145,13 @@ const QuizState = (props) => {
           let ques = await getQuestion(questionID);
           if (ques.timer == 60) medQues.push(questionID);
         }
+
         for (let i = 0; i < questions.length; i++) {
           const questionID = questions[i];
           let ques = await getQuestion(questionID);
           if (ques.timer == 90) hardQues.push(questionID);
         }
+
         // if that question not already included from questions then include it
         while (quesRandom.length < random) {
           const randomIndex = Math.floor(Math.random() * easyQues.length);

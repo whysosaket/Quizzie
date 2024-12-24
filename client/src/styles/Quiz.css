@@ -1,97 +1,105 @@
+/* Global Styles */
 body {
-  background-color: #041325;
+  background: linear-gradient(135deg, #041325, #06264a); /* Dark blue gradient */
+  background-size: cover;
+  font-family: 'Arial', sans-serif;
+  color: #ffffff;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto; /* Allow vertical scrolling */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
 }
 
+/* Quiz Container */
 .quizcontainer {
-  width: 65%;
-  background-color: white;
-  border-radius: 12px;
-  height: auto; /* Let the container grow based on content height */
-  max-height: 70vh; /* Limit the maximum height to 70% of the viewport */
-  margin: 5rem auto;
-  padding: 2rem;
-  overflow-y: auto; /* Enables scrolling if content exceeds the container height */
-  box-sizing: border-box; /* Includes padding and borders in the element's total width and height */
-}
-
-
-.quizcompleted {
-  height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
+  overflow-y: auto;
   align-items: center;
+  width: 100%;
+  max-width: 800px; /* Increase the max-width to 800px */
+  padding: 1rem;
+  box-sizing: border-box;
+  position: relative;
 }
 
-.quizcompleted h1 {
-  font-size: 2.7rem;
-  text-align: center;
+.question-container {
+  max-height: 60vh;
 }
-
-.quizcompleted .score {
-  color: #60b84b;
-}
-
-.quizcompleted .thankyou {
-  font-size: 4rem;
-  text-align: center;
-}
-
+/* Top Bar */
 .qtopbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 2rem;
+  width: 100%;
+  padding: 1rem;
+  box-sizing: border-box;
 }
 
 .qtopbar .timer {
   color: #d60000;
+  font-weight: bold;
+}
+
+/* Question Section */
+.questions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 2rem;
+  width: 100%;
+  max-width: 90%; /* Adjust max-width to 90% of the container */
+  word-wrap: break-word; /* Ensure long words break to the next line */
+  white-space: pre-wrap; /* Preserve whitespace and wrap text */
 }
 
 .questions .question {
-  font-size: 2rem;
-  text-align: center;
+  font-size: 1rem; /* Decrease the font size */
+  text-align: center; /* Center the text */
+  margin-bottom: 2rem;
+  padding: 20px; /* Add padding to expand the question */
+  width: 100%;
+  box-sizing: border-box;
+  display: block; /* Ensure the text starts and ends at the same line */
+  max-width: 100%; /* Ensure the text wraps within the container */
+  margin: 0 auto; /* Center the text block within its container */
+  overflow: visible; /* Ensure the text is fully visible */
+  word-break: break-word; /* Break long words */
 }
 
+/* Options */
 .options {
-  margin: auto;
-  width: 80%;
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 1rem;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  padding: 1rem;
+  box-sizing: border-box;
 }
 
 .options .option {
   cursor: pointer;
-  background-color: #f0f0f0;
+  background: rgba(255, 255, 255, 0.2);
   padding: 1rem;
   border-radius: 12px;
-  margin: 1rem 3rem;
-  width: 30%;
-  font-size: 1.2rem;
-}
-
-.options img {
   width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 12px;
-}
-
-.option.both img{
-  width: 50%;
-  margin-left: 0.5rem;
-}
-
-.option.both{
-  padding: 1rem 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  text-align: center;
+  font-size: 1.2rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 .options .option:hover {
   background-color: #60b84b;
   color: white;
+  transform: translateY(-5px);
 }
 
 .options .option.selected {
@@ -99,81 +107,89 @@ body {
   color: white;
 }
 
-.quizcontainer .submit {
-  width: 100%;
+/* Submit Button */
+.submit {
   display: flex;
   justify-content: center;
   margin-top: 4rem;
+  width: 100%;
 }
 
-.quizcontainer .submitbtn {
-  background-color: #60b84b;
-  color: white;
+.submitbtn {
+  background: linear-gradient(90deg, #60b84b, #4a8d39);
   border: none;
   border-radius: 12px;
   padding: 1rem 5rem;
-  margin: auto;
-  text-align: center;
+  font-size: 1.2rem;
   cursor: pointer;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease, background-color 0.3s ease;
 }
 
-.quizcontainer .submitbtn:hover {
+.submitbtn:hover {
   background-color: #4a8d39;
   color: white;
+  transform: scale(1.05);
 }
 
-.questions.startquiz{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    height: 100%;
+/* Login Page */
+.login {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 3rem; /* Increase padding to make the login page bigger */
+  background: rgba(255, 255, 255, 0.1); /* Light background */
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  max-width: 500px; /* Increase max-width to make the login page bigger */
+  box-sizing: border-box;
 }
 
-.questions .startquizbtn{
-    background-color: #60B84B;
-    color: white;
-    border: none;
-    border-radius: 12px;
-    padding: 2rem 8rem;
-    margin: auto;
-    text-align: center;
-    cursor: pointer;
-    font-size: 2rem;
+.startquiz {
+  width: 100%;
+  max-width: 500px; /* Increase max-width to make the start quiz page bigger */
+  margin: 0 auto;
 }
 
-.questions.startquiz h1{
-   font-size: 4rem;
-}
-
-@media screen and (max-width: 768px){
-  
-  .questions .startquizbtn{
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .quizcontainer {
     width: 100%;
-    padding: 1rem 4rem;
+    padding: 10px;
+  }
+
+  .qtopbar {
     font-size: 1rem;
   }
 
-  .quizcompleted{
+  .questions {
+    max-width: 100%; /* Adjust max-width for smaller screens */
+  }
+
+  .questions .question {
+    font-size: 1.2rem; /* Adjust font size for smaller screens */
+    padding: 10px;
+  }
+
+  .options .option {
     width: 100%;
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .questions .question {
+    font-size: 1rem; /* Adjust font size for smaller screens */
   }
 
-  .quizcontainer{
-    width: 80%;
+  .options .option {
+    font-size: 0.9rem;
   }
 
-  .quizcompleted .thankyou{
-    font-size: 1.5rem;
-
+  .submitbtn {
+    padding: 10px 15px;
+    font-size: 1rem;
   }
-
-  .options{
-    justify-content: center;
-  }
-
-  .options .option{
-    width: 100%;
-    text-align: center;
-  }
-
 }

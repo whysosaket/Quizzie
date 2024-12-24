@@ -562,6 +562,25 @@ const getQuestion = async (req, res) => {
   }
 };
 
+const getAllQuestions = async (req, res) => {
+  let success = false;
+  let questions = await Question.find({}, "-correctAnswer");
+  // filter out and send 5 questions with timer each 30, 60, 90
+  let easyQuestions = questions.filter((question) => question.timer === 30);
+  let medQuestions = questions.filter((question) => question.timer === 60);
+  let hardQuestions = questions.filter((question) => question.timer === 90);
+  easyQuestions = easyQuestions.sort(() => Math.random() - 0.5);
+  medQuestions = medQuestions.sort(() => Math.random() - 0.5);
+  hardQuestions = hardQuestions.sort(() => Math.random() - 0.5);
+  easyQuestions = easyQuestions.slice(0, 5);
+  medQuestions = medQuestions.slice(0, 5);
+  hardQuestions = hardQuestions.slice(0, 5);
+  let randomQuestions = [...easyQuestions, ...medQuestions, ...hardQuestions];
+  success = true;
+  return res.json({ success, questions: randomQuestions });
+};
+
+
 module.exports = {
   createQuiz,
   getQuiz,
@@ -572,4 +591,5 @@ module.exports = {
   takePoll,
   getTrending,
   getQuestion,
+  getAllQuestions
 };

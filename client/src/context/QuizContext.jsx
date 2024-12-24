@@ -135,61 +135,42 @@ const QuizState = (props) => {
         let easyQues = [];
         let medQues = [];
         let hardQues = [];
-        for (let i = 0; i < questions.length; i++) {
-          const questionID = questions[i];
-          let ques = await getQuestion(questionID);
-          if (ques.timer == 30) easyQues.push(questionID);
-        }
-        for (let i = 0; i < questions.length; i++) {
-          const questionID = questions[i];
-          let ques = await getQuestion(questionID);
-          if (ques.timer == 60) medQues.push(questionID);
+        
+        const allQuestions = await getAllQuestions();
+
+        for (let i = 0; i < allQuestions.length; i++) {
+          const question = allQuestions[i];
+          if (question.timer == 30) easyQues.push(question._id);
+          else if (question.timer == 60) medQues.push(question._id);
+          else if (question.timer == 90) hardQues.push(question._id);
         }
 
-        for (let i = 0; i < questions.length; i++) {
-          const questionID = questions[i];
-          let ques = await getQuestion(questionID);
-          if (ques.timer == 90) hardQues.push(questionID);
-        }
+        quesRandom = [...easyQues, ...medQues, ...hardQues];
 
-        // if that question not already included from questions then include it
-        while (quesRandom.length < random) {
-          const randomIndex = Math.floor(Math.random() * easyQues.length);
-          const selectedQuestion = easyQues[randomIndex];
-          if (!quesRandom.includes(selectedQuestion)) {
-            quesRandom.push(selectedQuestion);
-          }
-        }
-        while (quesRandom.length < random + 5) {
-          const randomIndex = Math.floor(Math.random() * medQues.length);
-          const selectedQuestion = medQues[randomIndex];
-          if (!quesRandom.includes(selectedQuestion)) {
-            quesRandom.push(selectedQuestion);
-          }
-        }
-        while (quesRandom.length < random + 10) {
-          const randomIndex = Math.floor(Math.random() * hardQues.length);
-          const selectedQuestion = hardQues[randomIndex];
-          if (!quesRandom.includes(selectedQuestion)) {
-            quesRandom.push(selectedQuestion);
-          }
-        }
-
+        setTakeQuizQuestions(allQuestions);
         setTakeQuizInfo({ name, type, question, quesRandom, quizID });
-        let newQuestions = [];
-        for (let i = 0; i < quesRandom.length; i++) {
-          const questionID = quesRandom[i];
-
-          let ques = await getQuestion(questionID);
-          newQuestions.push(ques);
-        }
-
-        setTakeQuizQuestions(newQuestions);
         return true;
       } else {
         toastMessage(data.error, "warning");
         return false;
       }
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
+  };
+
+
+  const getAllQuestions = async () => {
+    try {
+      const response = await fetch(`${url}/api/questions`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const data = await response.json();
+      return data.questions;
     } catch (error) {
       console.log(error);
       return false;

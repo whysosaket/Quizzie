@@ -1,9 +1,45 @@
 @import url('https://fonts.googleapis.com/css2?family=Jomhuria&family=Poppins:wght@400;500;600;700;800;900&display=swap');
 
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-body{
-  background-color: #F2F2F2;
+.markdown-content {
+  /* General text styling */
+  line-height: 1.6;
+}
+
+.markdown-content pre {
+  margin: 1em 0;
+  padding: 1em;
+  border-radius: 0.5rem;
+  background-color: #f8f9fa;
+  overflow-x: auto;
+}
+
+.markdown-content code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 0.75em;
+  padding: 0.2em 0.4em;
+  border-radius: 0.25rem;
+  background-color: #f8f9fa;
+}
+
+.markdown-content pre code {
   padding: 0;
+  background-color: transparent;
+  font-size: 0.7em;
+  line-height: 1.5;
+}
+
+.code-block-wrapper {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.code-block-wrapper pre {
   margin: 0;
-  font-family: Poppins;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
 }

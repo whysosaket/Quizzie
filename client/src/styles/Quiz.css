@@ -6,11 +6,9 @@ body {
   color: #ffffff;
   margin: 0;
   padding: 0;
-  overflow-y: auto; /* Allow vertical scrolling */
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
 }
 
 /* Quiz Container */

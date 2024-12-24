@@ -8,6 +8,7 @@ const {
   takePoll,
   getTrending,
   getQuestion,
+  getAllQuestions,
 } = require("../controllers/quizController");
 const fetchuser = require("../middleware/fetchuser");
 
@@ -32,6 +33,7 @@ const quiz = (router) => {
   router
     .route("/api/question/:questionID")
     .get((req, res) => getQuestion(req, res));
+  router.route("/api/questions").get((req, res) => getAllQuestions(req, res));
 };
 
 module.exports = quiz;

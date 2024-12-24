@@ -20,7 +20,7 @@ function App() {
             <ToastContainer autoClose={1000} />
             <TopLoadingBar />
             <Router>
-              <div className="container">
+              <div className="">
                 <Routes>
                   <Route exact path="/" element={<Home />} />
                   <Route path="/auth" element={<Auth />} />

@@ -300,7 +300,7 @@ const takeQuiz = async (req, res) => {
     return res.json({ success, error: "Quiz ID is required!" });
   }
 
-  let { answers, email, regNo, takeQuizQuestions } = req.body;
+  let { answers, email, regNo, takeQuizQuestions, questionTimers } = req.body;
 
   try {
     let quiz = await Quiz.findOne({ quizID });
@@ -320,6 +320,8 @@ const takeQuiz = async (req, res) => {
       });
     }
 
+    const allQuestions = await Question.find({});
+
     let score = 0;
     let total = questions.length;
     let attempted = 0;
@@ -330,7 +332,7 @@ const takeQuiz = async (req, res) => {
       let question = questions[i];
       let answer = answers[i] || "";
 
-      let ques = await Question.findOne({ _id: question });
+      let ques = allQuestions.find((q) => q._id.toString() === question._id);
       if (!ques) {
         return res.json({
           success: false,
@@ -342,7 +344,9 @@ const takeQuiz = async (req, res) => {
         attempted++;
         if (answer === ques.correctAnswer) {
           correct++;
-          score++;
+          if (ques.timer === 30) score += 1;
+          else if (ques.timer === 60) score += 1.5;
+          else if (ques.timer === 90) score += 2;
           ques.correct = (ques.correct || 0) + 1;
         } else {
           incorrect++;
@@ -354,16 +358,51 @@ const takeQuiz = async (req, res) => {
       await ques.save();
     }
 
-    let result = {
+    let results = {
       score,
       total,
       attempted,
       correct,
       incorrect,
       questionAnswerPairs,
+      questionTimers,
     };
+
+    // Save Score
+    const existingResult = await QuizResult.findOne({ email, regNo });
+    if (existingResult) {
+      return res
+        .status(400)
+        .json({ success: false, error: "You have already taken this quiz." });
+    }
+
+    const formattedQuestionAnswerPairs = questionAnswerPairs.map((pair) => ({
+      questionID: pair.question._id,
+      answer: pair.answer,
+    }));
+
+    let emailData = await Emails.findOne({ email });
+    if (!emailData) {
+      return res.json({ success: false, error: "Email Not Found!" });
+    }
+    emailData.quizStatus = "completed";
+    await emailData.save();
+
+    // Save
+    const result = new QuizResult({
+      quizID,
+      email,
+      regNo,
+      score,
+      total,
+      questionTimers,
+      formattedQuestionAnswerPairs,
+    });
+    await result.save();
+    
+
     success = true;
-    return res.json({ success, result });
+    return res.json({ success, result: results });
   } catch (error) {
     console.error("Error in takeQuiz:", error);
     return res.json({ success: false, error: "Something Went Wrong!" });
@@ -393,6 +432,13 @@ const save_score = async (req, res) => {
       questionID: pair.question._id,
       answer: pair.answer,
     }));
+
+    let emailData = await Emails.findOne({ email });
+    if (!emailData) {
+      return res.json({ success: false, error: "Email Not Found!" });
+    }
+    emailData.quizStatus = "completed";
+    await emailData.save();
 
     // Save
     const result = new QuizResult({
@@ -552,7 +598,7 @@ const getQuestion = async (req, res) => {
   try {
     const question = await Question.findOne({ _id: questionID });
     if (!question) {
-      return res.json({ error: "Question Not Found!xyz" });
+      return res.json({ error: "Question Not Found!" });
     }
 
     return res.json({ success: true, question });
@@ -564,6 +610,25 @@ const getQuestion = async (req, res) => {
 
 const getAllQuestions = async (req, res) => {
   let success = false;
+  const { email, regNo } = req.body;
+
+  let emailData = await Emails.findOne({ email });
+  if (!emailData) {
+    return res.json({ success: false, error: "Email Not Found!" });
+  }
+
+  let quizStatus = emailData.quizStatus;
+  let quizId = emailData.quizID;
+  let attemptNumber = emailData.attemptNumber;
+
+  if (attemptNumber > 3) {
+    return res.json({ success: false, error: "You have already attempted the quiz more than 3 times! Contact Admin if you want to attempt again." });
+  }
+
+  if (quizStatus === "completed") {
+    return res.json({ success: false, error: "You have already completed the quiz!" });
+  }
+
   let questions = await Question.find({}, "-correctAnswer");
   // filter out and send 5 questions with timer each 30, 60, 90
   let easyQuestions = questions.filter((question) => question.timer === 30);
@@ -576,6 +641,31 @@ const getAllQuestions = async (req, res) => {
   medQuestions = medQuestions.slice(0, 5);
   hardQuestions = hardQuestions.slice(0, 5);
   let randomQuestions = [...easyQuestions, ...medQuestions, ...hardQuestions];
+
+  if (quizStatus === "started") {
+    emailData.attemptNumber = emailData.attemptNumber + 1;
+    await emailData.save();
+    // return previous questions
+    let questions = randomQuestions;
+    // for each question reduce timer by 10
+    questions = questions.map((question) => {
+      question.timer = Math.max(0, question.timer - emailData.attemptNumber * 5);
+      if (question.timer < 0) question.timer = 0;
+      if (question.timer > 0) return question;
+      else return null;
+    });
+     // filter out null questions
+     questions = questions.filter((question) => question !== null);
+     return res.json({ success: true, questions, quizId });
+   }
+ 
+ 
+
+  emailData.quizQuestions = randomQuestions.map((question) => question._id);
+  emailData.quizStatus = "started";
+  emailData.attemptNumber = emailData.attemptNumber + 1;
+  await emailData.save();
+  
   success = true;
   return res.json({ success, questions: randomQuestions });
 };

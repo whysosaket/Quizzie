@@ -25,9 +25,6 @@ const Questions = ({ setIsFinished }) => {
   const [selected, setSelected] = useState(-1);
   const [questionTimers, setQuestionTimers] = useState([]);
   const [isCompleted, setIsCompleted] = useState(false);
-  useEffect(() => {
-    getQuiz(location.pathname.split("/")[2]);
-  }, []);
 
   useEffect(() => {
     let countdown;
@@ -96,8 +93,13 @@ const Questions = ({ setIsFinished }) => {
       toast(message);
       return;
     }
+
+    const value = await getQuiz(location.pathname.split("/")[2], email, regNo);
+    if (!value) {
+      return;
+    }
     setQuestionTimers(Array(takeQuizQuestions.length).fill(0));
-    setTimer(takeQuizQuestions[0].timer);
+    setTimer(value[0].timer);
     setIsStarted(true);
   };
 

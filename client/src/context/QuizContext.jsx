@@ -118,7 +118,7 @@ const QuizState = (props) => {
   const [takeQuizQuestions, setTakeQuizQuestions] = useState([]);
   const [result, setResult] = useState({ score: 0, total: 0 });
 
-  const getQuiz = async (quizID) => {
+  const getQuiz = async (quizID, email, regNo) => {
     try {
       const response = await fetch(`${url}/api/quiz/${quizID}`, {
         method: "GET",
@@ -128,28 +128,21 @@ const QuizState = (props) => {
       });
       const data = await response.json();
       if (data.success) {
-        const { name, type, question, questions, quizID } = data.quiz;
+        const { name, type, question, quizID } = data.quiz;
 
         let quesRandom = [];
-        var random = 5;
-        let easyQues = [];
-        let medQues = [];
-        let hardQues = [];
         
-        const allQuestions = await getAllQuestions();
+        const allQuestions = await getAllQuestions(email, regNo);
 
         for (let i = 0; i < allQuestions.length; i++) {
           const question = allQuestions[i];
-          if (question.timer == 30) easyQues.push(question._id);
-          else if (question.timer == 60) medQues.push(question._id);
-          else if (question.timer == 90) hardQues.push(question._id);
+          quesRandom.push(question._id);
         }
 
-        quesRandom = [...easyQues, ...medQues, ...hardQues];
 
         setTakeQuizQuestions(allQuestions);
         setTakeQuizInfo({ name, type, question, quesRandom, quizID });
-        return true;
+        return allQuestions;
       } else {
         toastMessage(data.error, "warning");
         return false;
@@ -161,16 +154,23 @@ const QuizState = (props) => {
   };
 
 
-  const getAllQuestions = async () => {
+  const getAllQuestions = async (email, regNo) => {
     try {
       const response = await fetch(`${url}/api/questions`, {
-        method: "GET",
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
+        body: JSON.stringify({ email, regNo }),
       });
       const data = await response.json();
-      return data.questions;
+      if (data.success) {
+        return data.questions;
+      } else {
+        toastMessage(data.error, "warning");
+        return false;
+      }
+
     } catch (error) {
       console.log(error);
       return false;
@@ -207,7 +207,7 @@ const QuizState = (props) => {
     regNo,
     questionTimers,
   }) => {
-    const body = { answers, email, regNo, takeQuizQuestions };
+    const body = { answers, email, regNo, takeQuizQuestions, questionTimers };
     const qid = quizID;
 
     try {
@@ -222,36 +222,6 @@ const QuizState = (props) => {
       const data = await response.json();
 
       if (data.success) {
-        const { score, total } = data.result;
-        setResult({ score, total });
-
-        const questionAnswerPairs = data.result.questionAnswerPairs;
-
-        const scoreBody = {
-          quizID,
-          email,
-          regNo,
-          score,
-          total,
-          questionTimers,
-          questionAnswerPairs,
-        };
-
-        const scoreResponse = await fetch(`${url}/api/quiz/save_score`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(scoreBody),
-        });
-        const scoreData = await scoreResponse.json();
-        console.log(scoreData.success);
-        if (scoreData.success) {
-          console.log("Score saved successfully");
-        } else {
-          toastMessage(scoreData.error || "Failed to save score", "warning");
-        }
-
         return true;
       } else {
         toastMessage(data.error, "warning");

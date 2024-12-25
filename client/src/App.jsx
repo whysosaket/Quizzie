@@ -17,7 +17,7 @@ function App() {
       <GlobalState>
         <AnalyticsState>
           <QuizState>
-            <ToastContainer autoClose={1000} />
+            <ToastContainer autoClose={3000} />
             <TopLoadingBar />
             <Router>
               <div className="">

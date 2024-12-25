@@ -10,6 +10,20 @@ const emailSchema = new mongoose.Schema(
       lowercase: true,
       match: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
     },
+    regNo: {
+      type: String,
+      required: false,
+    },
+    quizStatus: {
+      enum: ["completed", "not_started", "started"],
+      type: String,
+      required: true,
+    },
+    attemptNumber: {
+      type: Number,
+      required: false,
+      default: 0,
+    },
   },
   { timestamps: true }
 );

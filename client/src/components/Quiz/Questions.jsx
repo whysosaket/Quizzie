@@ -384,9 +384,6 @@ const Questions = ({ setIsFinished }) => {
                 alt="Logo"
                 className="mx-auto mb-4 h-16 w-16 rounded-full"
               />
-              <h1 className="text-3xl font-bold text-gray-800 mb-2">
-                {takeQuizInfo.name}
-              </h1>
               <h1 className="text-4xl font-extrabold text-gray-800">
                 Codex Start
               </h1>

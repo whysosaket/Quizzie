@@ -2,11 +2,11 @@ import { useContext, useState, useEffect } from "react";
 import QuizContext from "../../context/QuizContext";
 import { useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
-import PropTypes from 'prop-types';
-import Markdown from 'react-markdown'
-import rehypeHighlight from 'rehype-highlight';
-import remarkGfm from 'remark-gfm';
-import 'highlight.js/styles/github.css'; // You can choose different styles
+import PropTypes from "prop-types";
+import Markdown from "react-markdown";
+import rehypeHighlight from "rehype-highlight";
+import remarkGfm from "remark-gfm";
+import "highlight.js/styles/github.css"; // You can choose different styles
 
 const delimeter = "@1&2^";
 
@@ -25,6 +25,7 @@ const Questions = ({ setIsFinished }) => {
   const [selected, setSelected] = useState(-1);
   const [questionTimers, setQuestionTimers] = useState([]);
   const [isCompleted, setIsCompleted] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     let countdown;
@@ -88,19 +89,24 @@ const Questions = ({ setIsFinished }) => {
       return;
     }
 
+    setLoading(true);
+
     const { success, message } = await checkIfAttempted(email, regNo);
     if (success) {
       toast(message);
+      setLoading(false);
       return;
     }
 
     const value = await getQuiz(location.pathname.split("/")[2], email, regNo);
     if (!value) {
+      setLoading(false);
       return;
     }
     setQuestionTimers(Array(takeQuizQuestions.length).fill(0));
     setTimer(value[0].timer);
     setIsStarted(true);
+    setLoading(false);
   };
 
   const handleSelected = (index) => {
@@ -169,17 +175,17 @@ const Questions = ({ setIsFinished }) => {
         {isStarted ? (
           isCompleted ? (
             <div className="text-center p-12 bg-white rounded-2xl shadow-xl">
-              <svg 
-                className="w-20 h-20 mx-auto mb-6 text-gray-800" 
-                fill="none" 
-                stroke="currentColor" 
+              <svg
+                className="w-20 h-20 mx-auto mb-6 text-gray-800"
+                fill="none"
+                stroke="currentColor"
                 viewBox="0 0 24 24"
               >
-                <path 
-                  strokeLinecap="round" 
-                  strokeLinejoin="round" 
-                  strokeWidth={2} 
-                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" 
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
                 />
               </svg>
               <h1 className="text-3xl font-bold text-gray-800">
@@ -194,31 +200,32 @@ const Questions = ({ setIsFinished }) => {
               <div className="flex justify-between items-center border-b border-gray-200 pb-6">
                 <div className="flex items-center space-x-2">
                   <span className="text-3xl font-bold text-gray-800">
-                    {String(questionNumber + 1).padStart(2, '0')}
+                    {String(questionNumber + 1).padStart(2, "0")}
                   </span>
                   <span className="text-gray-400 text-lg">
-                    /{String(takeQuizInfo.quesRandom.length).padStart(2, '0')}
+                    /{String(takeQuizInfo.quesRandom.length).padStart(2, "0")}
                   </span>
                 </div>
                 {takeQuizInfo.type === "qna" &&
                   takeQuizQuestions[questionNumber] &&
                   takeQuizQuestions[questionNumber].timer > 0 && (
                     <div className="flex items-center space-x-2">
-                      <svg 
-                        className="w-5 h-5 text-gray-600" 
-                        fill="none" 
-                        stroke="currentColor" 
+                      <svg
+                        className="w-5 h-5 text-gray-600"
+                        fill="none"
+                        stroke="currentColor"
                         viewBox="0 0 24 24"
                       >
-                        <path 
-                          strokeLinecap="round" 
-                          strokeLinejoin="round" 
-                          strokeWidth={2} 
-                          d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" 
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
                         />
                       </svg>
                       <span className="text-xl font-mono text-gray-800">
-                        00:{timer < 10 ? "0" : ""}{timer}
+                        00:{timer < 10 ? "0" : ""}
+                        {timer}
                       </span>
                     </div>
                   )}
@@ -226,16 +233,18 @@ const Questions = ({ setIsFinished }) => {
 
               <div className="py-6">
                 <h2 className="text-2xl font-semibold text-gray-800 mb-8 markdown-content">
-                  <Markdown 
+                  <Markdown
                     remarkPlugins={[remarkGfm]}
                     rehypePlugins={[rehypeHighlight]}
                     components={{
-                      code({node, inline, className, children, ...props}) {
-                        const match = /language-(\w+)/.exec(className || '');
+                      code({ node, inline, className, children, ...props }) {
+                        const match = /language-(\w+)/.exec(className || "");
                         return !inline && match ? (
                           <div className="code-block-wrapper my-4">
                             <div className="code-block-header bg-gray-100 px-4 py-2 rounded-t-lg border border-gray-200">
-                              <span className="text-xs text-gray-600">{match[1]}</span>
+                              <span className="text-xs text-gray-600">
+                                {match[1]}
+                              </span>
                             </div>
                             <pre className="!mt-0 !bg-gray-50">
                               <code className={className} {...props}>
@@ -248,7 +257,7 @@ const Questions = ({ setIsFinished }) => {
                             {children}
                           </code>
                         );
-                      }
+                      },
                     }}
                   >
                     {takeQuizQuestions[questionNumber]?.question}
@@ -256,42 +265,69 @@ const Questions = ({ setIsFinished }) => {
                 </h2>
 
                 <div className="space-y-4">
-                  {takeQuizQuestions[questionNumber]?.options?.map((option, i) => (
-                    <div
-                      key={i}
-                      onClick={() => handleSelected(i)}
-                      className={`group p-6 rounded-xl border-2 cursor-pointer transition-all
-                        ${selected === i 
-                          ? 'border-gray-800 bg-gray-50' 
-                          : 'border-gray-200 hover:border-gray-400'}`}
-                    >
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-4">
-                          <div className={`w-6 h-6 rounded-full border-2 transition-all flex items-center justify-center
-                            ${selected === i 
-                              ? 'border-gray-800 bg-gray-800' 
-                              : 'border-gray-300 group-hover:border-gray-400'}`}
-                          >
-                            {selected === i && (
-                              <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
-                                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                              </svg>
-                            )}
+                  {takeQuizQuestions[questionNumber]?.options?.map(
+                    (option, i) => (
+                      <div
+                        key={i}
+                        onClick={() => handleSelected(i)}
+                        className={`group p-6 rounded-xl border-2 cursor-pointer transition-all
+                        ${
+                          selected === i
+                            ? "border-gray-800 bg-gray-50"
+                            : "border-gray-200 hover:border-gray-400"
+                        }`}
+                      >
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center space-x-4">
+                            <div
+                              className={`w-6 h-6 rounded-full border-2 transition-all flex items-center justify-center
+                            ${
+                              selected === i
+                                ? "border-gray-800 bg-gray-800"
+                                : "border-gray-300 group-hover:border-gray-400"
+                            }`}
+                            >
+                              {selected === i && (
+                                <svg
+                                  className="w-4 h-4 text-white"
+                                  fill="currentColor"
+                                  viewBox="0 0 20 20"
+                                >
+                                  <path
+                                    fillRule="evenodd"
+                                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                    clipRule="evenodd"
+                                  />
+                                </svg>
+                              )}
+                            </div>
+                            <span
+                              className={`text-lg ${
+                                selected === i
+                                  ? "text-gray-800"
+                                  : "text-gray-600"
+                              }`}
+                            >
+                              {option}
+                            </span>
                           </div>
-                          <span className={`text-lg ${selected === i ? 'text-gray-800' : 'text-gray-600'}`}>
-                            {option}
-                          </span>
+                          {takeQuizQuestions[questionNumber]?.imageOptions?.[
+                            i
+                          ] && (
+                            <img
+                              src={
+                                takeQuizQuestions[questionNumber].imageOptions[
+                                  i
+                                ]
+                              }
+                              alt={`option-${i}`}
+                              className="max-h-24 object-contain rounded-lg"
+                            />
+                          )}
                         </div>
-                        {takeQuizQuestions[questionNumber]?.imageOptions?.[i] && (
-                          <img
-                            src={takeQuizQuestions[questionNumber].imageOptions[i]}
-                            alt={`option-${i}`}
-                            className="max-h-24 object-contain rounded-lg"
-                          />
-                        )}
                       </div>
-                    </div>
-                  ))}
+                    )
+                  )}
                 </div>
               </div>
 
@@ -302,8 +338,18 @@ const Questions = ({ setIsFinished }) => {
                     className="px-8 py-3 bg-gray-800 text-white rounded-xl hover:bg-gray-900 transition-colors flex items-center space-x-2"
                   >
                     <span>Next Question</span>
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    <svg
+                      className="w-5 h-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 5l7 7-7 7"
+                      />
                     </svg>
                   </button>
                 ) : (
@@ -312,8 +358,18 @@ const Questions = ({ setIsFinished }) => {
                     className="px-8 py-3 bg-gray-800 text-white rounded-xl hover:bg-gray-900 transition-colors flex items-center space-x-2"
                   >
                     <span>Submit Quiz</span>
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    <svg
+                      className="w-5 h-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M5 13l4 4L19 7"
+                      />
                     </svg>
                   </button>
                 )}
@@ -323,10 +379,17 @@ const Questions = ({ setIsFinished }) => {
         ) : (
           <div className="max-w-md mx-auto bg-white p-10 rounded-2xl shadow-xl">
             <div className="text-center mb-8">
+              <img
+                src="/LogoF.png"
+                alt="Logo"
+                className="mx-auto mb-4 h-16 w-16 rounded-full"
+              />
               <h1 className="text-3xl font-bold text-gray-800 mb-2">
                 {takeQuizInfo.name}
               </h1>
-              <p className="text-gray-600">Enter your details to begin</p>
+              <h1 className="text-4xl font-extrabold text-gray-800">
+                Codex Start
+              </h1>
             </div>
 
             <div className="space-y-6">
@@ -361,9 +424,19 @@ const Questions = ({ setIsFinished }) => {
 
               <button
                 onClick={startQuiz}
-                className="w-full py-4 bg-gray-800 text-white rounded-xl hover:bg-gray-900 transition-colors font-medium mt-4"
+                className={`w-full py-4 bg-gray-800 text-white rounded-xl hover:bg-gray-900 transition-colors font-medium mt-4 ${
+                  loading ? "cursor-not-allowed opacity-50" : ""
+                }`}
+                disabled={loading}
               >
-                Start Quiz
+                {loading ? (
+                  <div className="flex justify-center items-center">
+                    <div className="spinner-border animate-spin border-4 border-t-4 border-white rounded-full w-6 h-6"></div>
+                    <span className="ml-2">Loading...</span>
+                  </div>
+                ) : (
+                  "Start Quiz"
+                )}
               </button>
             </div>
           </div>
@@ -374,7 +447,7 @@ const Questions = ({ setIsFinished }) => {
 };
 
 Questions.propTypes = {
-  setIsFinished: PropTypes.func.isRequired
+  setIsFinished: PropTypes.func.isRequired,
 };
 
 export default Questions;

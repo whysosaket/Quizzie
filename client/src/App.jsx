@@ -11,6 +11,7 @@ import { QuizState } from "./context/QuizContext";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import TopLoadingBar from "./components/TopLoadingBar";
+import QuizWillStartSoon from "./pages/QuizWillStartSoon";
 
 function App() {
   return (
@@ -25,7 +26,8 @@ function App() {
                 <Routes>
                   {/* <Route exact path="/" element={<Home />} /> */}
                   {/* <Route path="/auth" element={<Auth />} /> */}
-                  <Route path="/quiz/:id" element={<Quiz />} />
+                  {/* <Route path="/quiz/:id" element={<Quiz />} /> */}
+                  <Route path="/quiz/:id" element={<QuizWillStartSoon />} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </div>

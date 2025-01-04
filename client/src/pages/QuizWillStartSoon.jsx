@@ -43,16 +43,16 @@ const QuizWillStartSoon = () => {
 
   return (
     <div className="flex flex-col items-center justify-center h-screen bg-white text-black">
-      <h1 className="text-4xl mb-4">Quiz Will Start Soon</h1>
+      <h1 className="text-4xl mb-4">Quiz Has Ended</h1>
       {timeLeft.hours === '00' && timeLeft.minutes === '00' && timeLeft.seconds === '00' ? (
         <div className="text-2xl mb-4 font-semibold flex flex-col items-center">
-            <h1 className=''>Please Refresh</h1>
-            <button 
+            {/* <h1 className=''>Please Refresh</h1> */}
+            {/* <button 
         onClick={handleRefresh} 
         className="px-4 py-2 bg-black text-white hover:bg-gray-800 rounded text-sm mx-auto mt-4"
       >
         Refresh
-      </button>
+      </button> */}
         </div>
       ) : (
         <div className="flex space-x-4 mb-4">

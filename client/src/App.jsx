@@ -26,8 +26,8 @@ function App() {
                 <Routes>
                   {/* <Route exact path="/" element={<Home />} /> */}
                   {/* <Route path="/auth" element={<Auth />} /> */}
-                  <Route path="/quiz/:id" element={<Quiz />} />
-                  {/* <Route path="/quiz/:id" element={<QuizWillStartSoon />} /> */}
+                  {/* <Route path="/quiz/:id" element={<Quiz />} /> */}
+                  <Route path="/quiz/:id" element={<QuizWillStartSoon />} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </div>

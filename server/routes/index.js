@@ -6,9 +6,9 @@ const quiz = require("./quiz");
 const analytics = require("./analytics");
 
 const r = () => {
-  // auth(router);
-  // quiz(router);
-  // analytics(router);
+  auth(router);
+  quiz(router);
+  analytics(router);
   return router;
 };
 

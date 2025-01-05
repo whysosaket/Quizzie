@@ -44,41 +44,6 @@ const QuizWillStartSoon = () => {
   return (
     <div className="flex flex-col items-center justify-center h-screen bg-white text-black">
       <h1 className="text-4xl mb-4">Quiz Has Ended</h1>
-      {timeLeft.hours === '00' && timeLeft.minutes === '00' && timeLeft.seconds === '00' ? (
-        <div className="text-2xl mb-4 font-semibold flex flex-col items-center">
-            {/* <h1 className=''>Please Refresh</h1> */}
-            {/* <button 
-        onClick={handleRefresh} 
-        className="px-4 py-2 bg-black text-white hover:bg-gray-800 rounded text-sm mx-auto mt-4"
-      >
-        Refresh
-      </button> */}
-        </div>
-      ) : (
-        <div className="flex space-x-4 mb-4">
-          <div className="flip-clock">
-            <div className={`flip-card-inner ${flipState.hours ? 'flip' : ''}`}>
-              <div className="flip-card-front">{timeLeft.hours}</div>
-              <div className="flip-card-back">{timeLeft.hours}</div>
-            </div>
-            <span>Hours</span>
-          </div>
-          <div className="flip-clock">
-            <div className={`flip-card-inner ${flipState.minutes ? 'flip' : ''}`}>
-              <div className="flip-card-front">{timeLeft.minutes}</div>
-              <div className="flip-card-back">{timeLeft.minutes}</div>
-            </div>
-            <span>Minutes</span>
-          </div>
-          <div className="flip-clock">
-            <div className={`flip-card-inner ${flipState.seconds ? 'flip' : ''}`}>
-              <div className="flip-card-front">{timeLeft.seconds}</div>
-              <div className="flip-card-back">{timeLeft.seconds}</div>
-            </div>
-            <span>Seconds</span>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
